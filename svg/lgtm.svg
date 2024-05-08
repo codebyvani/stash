@@ -1,4 +1,16 @@
-<svg width="65" height="18" xmlns="http://www.w3.org/2000/svg">
-  <rect width="100%" height="100%" fill="#4CAF50" stroke="#388E3C" stroke-width="0.25" rx="8" ry="8"/>
-  <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="12" font-weight="bold" fill="white">LGTM🍺</text>
+<svg width="70" height="20" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background gradient -->
+  <defs>
+    <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#388E3C;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#4CAF50;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <rect width="100%" height="100%" fill="url(#grad)" stroke="#388E3C" stroke-width="0.25" rx="3" ry="3"/>
+  <!-- LGTM text with bouncing animation -->
+  <text x="55%" y="60%" dominant-baseline="middle" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="12" font-weight="bold" fill="white">
+    <animateTransform attributeName="transform" type="translate" values="0 0; 0 -5; 0 0" dur="0.5s" repeatCount="indefinite" />
+    <animate attributeName="opacity" attributeType="CSS" values="1;0.5;1" keyTimes="0;0.5;1" dur="1s" repeatCount="indefinite"/>
+    LGTM 🎉
+  </text>
 </svg>
