@@ -18,7 +18,7 @@
   <g fill="#fff" text-anchor="middle" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" text-rendering="geometricPrecision" font-size="110">
     <text aria-hidden="true" x="450" y="160" fill="#010101" fill-opacity=".3" transform="scale(.1)" textLength="370">review</text>
     <text x="450" y="150" transform="scale(.1)" fill="#fff" textLength="370">review</text>
-    <text aria-hidden="true" x="955" y="160" fill="#010101" fill-opacity=".3" transform="scale(.1)" textLength="350">FIXED</text>
-    <text x="955" y="150" transform="scale(.1)" fill="#fff" textLength="350">FIXED</text>
+    <text aria-hidden="true" x="960" y="160" fill="#010101" fill-opacity=".3" transform="scale(.1)" textLength="350">FIXED</text>
+    <text x="960" y="150" transform="scale(.1)" fill="#fff" textLength="350">FIXED</text>
   </g>
 </svg>
