@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Countdown Timer</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #f5f5f5;
+      margin: 0;
+    }
+
+    .timer-container {
+      text-align: center;
+      background-color: #fff;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    }
+
+    #timer {
+      font-size: 3rem;
+      margin-bottom: 20px;
+    }
+
+    .buttons button, .inputs input {
+      padding: 10px 20px;
+      font-size: 1.2rem;
+      margin: 10px;
+      cursor: pointer;
+      border: none;
+      border-radius: 5px;
+      transition: background-color 0.3s;
+    }
+
+    .buttons button:hover, .inputs input:hover {
+      background-color: #ddd;
+    }
+
+    .inputs {
+      margin-bottom: 15px;
+    }
+
+    .inputs input {
+      width: 80px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="timer-container">
+    <div class="inputs">
+      <label for="minutesInput">Set (mins): </label>
+      <input type="number" id="minutesInput" min="1">
+    </div>
+    <div id="timer">
+      <span id="hours">00</span>:<span id="minutes">00</span>:<span id="seconds">00</span>
+    </div>
+    <div class="buttons">
+      <button id="startPauseBtn">Start</button>
+      <button id="resetBtn">Reset</button>
+    </div>
+  </div>
+
+  <script>
+    let timer;
+    let isRunning = false;
+    let totalSeconds = 0;
+
+    const hoursElement = document.getElementById('hours');
+    const minutesElement = document.getElementById('minutes');
+    const secondsElement = document.getElementById('seconds');
+    const startPauseBtn = document.getElementById('startPauseBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const minutesInput = document.getElementById('minutesInput');
+
+    function updateDisplay() {
+      const hours = Math.floor(totalSeconds / 3600);
+      const minutes = Math.floor((totalSeconds % 3600) / 60);
+      const seconds = totalSeconds % 60;
+
+      hoursElement.textContent = hours.toString().padStart(2, '0');
+      minutesElement.textContent = minutes.toString().padStart(2, '0');
+      secondsElement.textContent = seconds.toString().padStart(2, '0');
+    }
+
+    function startPause() {
+      if (isRunning) {
+        clearInterval(timer);
+        startPauseBtn.textContent = 'Start';
+      } else {
+        // Get minutes from input field and convert to total seconds
+        const minutes = parseInt(minutesInput.value);
+        if (isNaN(minutes) || minutes <= 0) {
+          alert('Please enter a valid number of minutes');
+          return;
+        }
+
+        totalSeconds = minutes * 60;
+        updateDisplay();
+
+        timer = setInterval(() => {
+          if (totalSeconds <= 0) {
+            clearInterval(timer);
+            startPauseBtn.textContent = 'Start';
+            isRunning = false;
+          } else {
+            totalSeconds--;
+            updateDisplay();
+          }
+        }, 1000);
+
+        startPauseBtn.textContent = 'Pause';
+      }
+      isRunning = !isRunning;
+    }
+
+    function reset() {
+      totalSeconds = 0; // Reset to 0 seconds
+      updateDisplay();
+      clearInterval(timer);
+      isRunning = false;
+      startPauseBtn.textContent = 'Start';
+      minutesInput.value = ''; // Clear input field
+    }
+
+    startPauseBtn.addEventListener('click', startPause);
+    resetBtn.addEventListener('click', reset);
+
+    // Initialize the display
+    updateDisplay();
+  </script>
+</body>
+</html>
