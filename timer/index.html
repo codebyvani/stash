@@ -71,6 +71,7 @@
     let timer;
     let isRunning = false;
     let totalSeconds = 0;
+    let isPaused = false;
 
     const hoursElement = document.getElementById('hours');
     const minutesElement = document.getElementById('minutes');
@@ -93,22 +94,24 @@
       if (isRunning) {
         clearInterval(timer);
         startPauseBtn.textContent = 'Start';
+        isPaused = true;
       } else {
-        // Get minutes from input field and convert to total seconds
-        const minutes = parseInt(minutesInput.value);
-        if (isNaN(minutes) || minutes <= 0) {
-          alert('Please enter a valid number of minutes');
-          return;
+        if (!isPaused) {
+          const minutes = parseInt(minutesInput.value);
+          if (isNaN(minutes) || minutes <= 0) {
+            alert('Please enter a valid number of minutes');
+            return;
+          }
+          totalSeconds = minutes * 60;
+          updateDisplay();
         }
-
-        totalSeconds = minutes * 60;
-        updateDisplay();
 
         timer = setInterval(() => {
           if (totalSeconds <= 0) {
             clearInterval(timer);
             startPauseBtn.textContent = 'Start';
             isRunning = false;
+            isPaused = false;
           } else {
             totalSeconds--;
             updateDisplay();
@@ -117,14 +120,16 @@
 
         startPauseBtn.textContent = 'Pause';
       }
+
       isRunning = !isRunning;
     }
 
     function reset() {
-      totalSeconds = 0; // Reset to 0 seconds
-      updateDisplay();
       clearInterval(timer);
+      totalSeconds = 0;
+      updateDisplay();
       isRunning = false;
+      isPaused = false;
       startPauseBtn.textContent = 'Start';
       minutesInput.value = ''; // Clear input field
     }
@@ -132,8 +137,7 @@
     startPauseBtn.addEventListener('click', startPause);
     resetBtn.addEventListener('click', reset);
 
-    // Initialize the display
-    updateDisplay();
+    updateDisplay(); // Initialize the display
   </script>
 </body>
 </html>
