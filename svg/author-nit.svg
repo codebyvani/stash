@@ -1,11 +1,11 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="111" height="22" role="img" aria-label="review: MUST">
+<svg xmlns="http://www.w3.org/2000/svg" width="71" height="22" role="img" aria-label="review: MUST">
   <title>review: NITS</title>
   <linearGradient id="s" x2="0" y2="100%">
     <stop offset="0" stop-color="#bbb" stop-opacity=".1"/>
     <stop offset="1" stop-opacity=".1"/>
   </linearGradient>
   <clipPath id="r">
-    <rect width="111" height="22" rx="3" fill="#fff"/>
+    <rect width="71" height="22" rx="3" fill="#fff"/>
   </clipPath>
   <g clip-path="url(#r)">
     <rect width="26" height="22" fill="#555"/>
