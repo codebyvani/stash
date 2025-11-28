@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="38" height="18" role="img" aria-label="review: MUST">
+  <title>review: IMO</title>
+  <linearGradient id="s" x2="0" y2="100%">
+    <stop offset="0" stop-color="#bbb" stop-opacity=".1"/>
+    <stop offset="1" stop-opacity=".1"/>
+  </linearGradient>
+  <clipPath id="r">
+    <rect width="38" height="18" rx="3" fill="#fff"/>
+  </clipPath>
+  <g clip-path="url(#r)">
+    <rect width="38" height="18" fill="#fe7d37"/>
+    <rect width="38" height="18" fill="url(#s)"/>
+  </g>
+  <g fill="#fff" text-anchor="middle"
+     font-family="Noto Sans JP, Hiragino Sans, Yu Gothic, Meiryo, Verdana, Geneva, DejaVu Sans, sans-serif"
+     text-rendering="geometricPrecision" font-size="110">
+    <text aria-hidden="true"
+          x="193" y="138"
+          fill="#010101" fill-opacity=".3"
+          transform="scale(.1)"
+          textLength="228">IMO</text>
+    <text x="190" y="133"
+          transform="scale(.1)"
+          fill="#fff"
+          textLength="228">IMO</text>
+  </g>
+</svg>

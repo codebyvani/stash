@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="60" height="18" role="img" aria-label="review: MUST">
+  <title>review: IMO</title>
+  <linearGradient id="s" x2="0" y2="100%">
+    <stop offset="0" stop-color="#bbb" stop-opacity=".1"/>
+    <stop offset="1" stop-opacity=".1"/>
+  </linearGradient>
+  <clipPath id="r">
+    <rect width="60" height="18" rx="3" fill="#fff"/>
+  </clipPath>
+  <g clip-path="url(#r)">
+    <rect width="60" height="18" fill="#a855f7"/>
+    <rect width="60" height="18" fill="url(#s)"/>
+  </g>
+  <g fill="#fff" text-anchor="middle"
+     font-family="Noto Sans JP, Hiragino Sans, Yu Gothic, Meiryo, Verdana, Geneva, DejaVu Sans, sans-serif"
+     text-rendering="geometricPrecision" font-size="110">
+    <text aria-hidden="true" x="290" y="138" fill="#010101" fill-opacity=".3" transform="scale(.1)" textLength="410">TWEET</text>
+    <text x="287" y="135" transform="scale(.1)" fill="#fff" textLength="410">TWEET</text>
+  </g>
+</svg>
