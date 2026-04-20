@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<meta name="text-scale" content="scale" />
+		<link href="./_app/immutable/entry/start.ZTRD4JHf.js" rel="modulepreload">
+		<link href="./_app/immutable/chunks/Dbe97jGa.js" rel="modulepreload">
+		<link href="./_app/immutable/chunks/HswGK2FN.js" rel="modulepreload">
+		<link href="./_app/immutable/chunks/BvMosnil.js" rel="modulepreload">
+		<link href="./_app/immutable/entry/app.Co52IYjb.js" rel="modulepreload">
+		<link href="./_app/immutable/chunks/DXb0ZbaM.js" rel="modulepreload">
+		<link href="./_app/immutable/chunks/CT0T0Gak.js" rel="modulepreload">
+		
+	</head>
+	<body data-sveltekit-preload-data="hover">
+		<script>
+			const t = localStorage.getItem('nihongo-theme');
+			if (t === 'dark' || (!t && matchMedia('(prefers-color-scheme: dark)').matches)) {
+				document.documentElement.classList.add('dark');
+			}
+		</script>
+		<div style="display: contents">
+			<script>
+				{
+					__sveltekit_y015ht = {
+						base: new URL(".", location).pathname.slice(0, -1)
+					};
+
+					const element = document.currentScript.parentElement;
+
+					Promise.all([
+						import("./_app/immutable/entry/start.ZTRD4JHf.js"),
+						import("./_app/immutable/entry/app.Co52IYjb.js")
+					]).then(([kit, app]) => {
+						kit.start(app, element);
+					});
+				}
+			</script>
+		</div>
+	</body>
+</html>
