@@ -1,0 +1,196 @@
+section#contact {
+    color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: #141516;
+    position: relative;
+    /* height: 100vh; */
+
+    .body {
+        padding-top: 200px;
+        width: 100%;
+        max-width: 1800px;
+        background-color: #141516;
+
+        .title {
+            border-bottom: 1px solid rgb(134, 134, 134);
+            padding-bottom: 100px;
+            margin: 0 200px; /* Improved margin shorthand */
+            position: relative;
+            font-family: "Acumin Pro Bold";
+            font-weight: bold;
+            span {
+                display: flex;
+                align-items: center;
+                .contact-imageContainer {
+                    width: 100px;
+                    height: 100px;
+                    position: relative;
+                    border-radius: 50%;
+                    overflow: hidden;
+
+                    img {
+                      object-fit: cover;
+                      position: absolute;
+                      height: 100%;
+                      width: 100%;
+                      left: 0;
+                      top: 0;
+                      right: 0;
+                      bottom: 0;
+                      color: transparent;
+                      object-position: top center;
+                    }
+                }
+                h2 {
+                    margin-left: 0.3em !important;
+                    font-size: 5vw !important;
+                    /* Ensure h2 doesn't get too small or too big */
+                    min-font-size: 2rem !important;
+                    max-font-size: 5rem !important;
+                }
+            }
+
+            h2 {
+              margin-left: 0.3em !important;
+              font-size: 5vw !important;
+              /* Ensure h2 doesn't get too small or too big */
+              min-font-size: 2rem !important;
+              max-font-size: 5rem !important;
+              font-weight: 300;
+              margin: 0;
+            }
+
+            .buttonContainer {
+                position: absolute;
+                left: calc(100% - 400px); 
+                top: calc(100% - 75px);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+
+            .button {
+                width: 180px;
+                height: 180px;
+                background-color: #455CE9;
+                color: white;
+                border-radius: 50%;
+                position: relative;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: normal;
+
+                p {
+                    margin: 0;
+                    font-size: 16px;
+                    font-weight: 300;
+                    z-index: 2;
+                    position: relative;
+                }
+            }
+
+            svg {
+                position: absolute;
+                top: 30%;
+                left: 100%;
+            }
+        }
+
+        .contact-nav {
+            display: flex;
+            gap: 20px;
+            margin-top: 100px !important;
+            margin: 0 200px; /* Shorthand for left-right margin */
+            justify-content: left; /* Centers the content horizontally */
+        }
+
+        .info {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 200px;
+            padding: 20px;
+
+            div {
+                display: flex;
+                gap: 10px;
+                align-items: flex-end;
+
+                p,
+                h3 {
+                    margin: 0;
+                    padding: 2.5px;
+                    cursor: pointer;
+                }
+
+                p {
+                    &::after {
+                        content: "";
+                        width: 0%;
+                        height: 1px;
+                        background-color: white;
+                        display: block;
+                        margin-top: 2px;
+                        position: relative;
+                        left: 50%;
+                        transform: translateX(-50%);
+                        transition: width 0.2s linear;
+                    }
+
+                    &:hover {
+                        &::after {
+                            width: 100%;
+                        }
+                    }
+                }
+
+                span {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 15px;
+                }
+
+                h3 {
+                    color: grey;
+                    cursor: default;
+                    font-weight: 300;
+                    font-size: 1em;
+                }
+            }
+        }
+    }
+}
+
+@media screen and (max-width: 768px) {
+    /* Adjust margins, padding, and font size for small screens */
+    .contact .body {
+        padding-top: 150px;
+    }
+
+    .contact .title {
+        margin: 0 20px; /* Reduce margins for smaller screens */
+    }
+
+    .contact .nav {
+        margin: 0 20px;
+        gap: 15px; /* Reduce gap for smaller screens */
+    }
+
+    .contact .info {
+        flex-direction: column; /* Stack info items on top of each other */
+        gap: 20px;
+    }
+
+    .contact .buttonContainer {
+        left: auto;
+        right: 50%; /* Center button horizontally on smaller screens */
+    }
+
+    .contact h2 {
+        font-size: 4vw;
+        min-font-size: 1.5rem;
+    }
+}

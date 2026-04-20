@@ -1,0 +1,65 @@
+@font-face {
+    font-family: 'Acumin Pro';
+    font-style: normal;
+    font-weight: normal;
+    src: local('Acumin Pro'), url('/fonts/Acumin-RPro.woff') format('woff');
+  }
+  
+
+  @font-face {
+    font-family: 'Acumin Pro Italic';
+    font-style: normal;
+    font-weight: normal;
+    src: local('Acumin Pro Italic'), url('/fonts/Acumin-ItPro.woff') format('woff');
+  }
+  
+
+  @font-face {
+    font-family: 'Acumin Pro Bold';
+    font-style: normal;
+    font-weight: normal;
+    src: local('Acumin Pro Bold'), url('/fonts/Acumin-BdPro.woff') format('woff');
+  }
+  
+
+  @font-face {
+  font-family: 'Acumin Pro Bold Italic';
+  font-style: normal;
+  font-weight: normal;
+  src: local('Acumin Pro Bold Italic'), url('/fonts/Acumin-BdItPro.woff') format('woff');
+  }
+
+
+:root {
+  font-family: 'Acumin Pro', 'Noto Sans', sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  display: block;
+  overflow: auto;
+}
+
+body {
+  font-weight: normal;  /* Default Regular */
+  margin: 0px;
+  overflow: hidden; /* Hide scrollbars */
+  cursor: wait;
+
+  color-scheme: light dark;
+  color: rgba(255, 255, 255, 0.87);
+  background-color: #242424;
+}
+
+.hero-description {
+  font-family: 'BebasNeue', sans-serif;
+  font-weight: 900; /* BebasNeue-Black */
+}
+
+.light-text {
+  font-family: 'BebasNeue', sans-serif;
+  font-weight: 200; /* Extra Light */
+}
