@@ -1,0 +1,390 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Signature Pad</title>
+    <style>
+      :root {
+        --bg: #ffffff;
+        --fg: #1a1a1a;
+        --muted: #6b7280;
+        --border: #e5e7eb;
+        --accent: #2563eb;
+        --accent-hover: #1d4ed8;
+        --danger: #ef4444;
+        --danger-hover: #dc2626;
+        --surface: #f9fafb;
+        --radius: 10px;
+      }
+
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bg: #0f1115;
+          --fg: #f3f4f6;
+          --muted: #9ca3af;
+          --border: #2a2f3a;
+          --surface: #161a22;
+        }
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        background: var(--bg);
+        color: var(--fg);
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial,
+          "Noto Sans", sans-serif;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      .wrap {
+        max-width: 760px;
+        margin: 0 auto;
+        padding: 16px;
+      }
+
+      .card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 14px;
+      }
+
+      .toolbar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        align-items: center;
+        margin-bottom: 10px;
+      }
+
+      .toolbar .spacer {
+        flex: 1;
+      }
+
+      .control {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 13px;
+        color: var(--muted);
+      }
+
+      .control input[type="color"] {
+        width: 28px;
+        height: 28px;
+        padding: 0;
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        background: none;
+        cursor: pointer;
+      }
+
+      .control input[type="range"] {
+        width: 110px;
+        accent-color: var(--accent);
+      }
+
+      button {
+        font: inherit;
+        font-size: 13px;
+        font-weight: 500;
+        padding: 8px 12px;
+        border-radius: 8px;
+        border: 1px solid var(--border);
+        background: var(--bg);
+        color: var(--fg);
+        cursor: pointer;
+        transition:
+          background 0.15s,
+          border-color 0.15s,
+          color 0.15s;
+      }
+
+      button:hover:not(:disabled) {
+        border-color: var(--accent);
+        color: var(--accent);
+      }
+
+      button:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+
+      button.primary {
+        background: var(--accent);
+        color: white;
+        border-color: var(--accent);
+      }
+
+      button.primary:hover:not(:disabled) {
+        background: var(--accent-hover);
+        border-color: var(--accent-hover);
+        color: white;
+      }
+
+      button.danger {
+        color: var(--danger);
+      }
+
+      button.danger:hover:not(:disabled) {
+        border-color: var(--danger);
+        background: var(--danger);
+        color: white;
+      }
+
+      .canvas-frame {
+        position: relative;
+        border: 1px dashed var(--border);
+        border-radius: var(--radius);
+        background:
+          linear-gradient(to bottom, transparent calc(100% - 1px), var(--border) 100%) no-repeat
+            bottom / 60% 100%,
+          #ffffff;
+        overflow: hidden;
+        aspect-ratio: 16 / 7;
+        touch-action: none;
+      }
+
+      canvas {
+        display: block;
+        width: 100%;
+        height: 100%;
+        cursor: crosshair;
+      }
+
+      .placeholder {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #c4c8d0;
+        font-size: 14px;
+        pointer-events: none;
+        letter-spacing: 0.02em;
+        user-select: none;
+      }
+
+      .placeholder.hidden {
+        display: none;
+      }
+
+      .status {
+        margin-top: 8px;
+        font-size: 12px;
+        color: var(--muted);
+        min-height: 18px;
+      }
+
+      .status.flash {
+        color: var(--accent);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <div class="card">
+        <div class="toolbar">
+          <label class="control" title="Pen color">
+            <span>Color</span>
+            <input id="color" type="color" value="#111827" />
+          </label>
+          <label class="control" title="Pen thickness">
+            <span>Size</span>
+            <input id="size" type="range" min="1" max="6" step="0.5" value="2.2" />
+          </label>
+          <div class="spacer"></div>
+          <button id="clear" class="danger" type="button">Clear</button>
+          <button id="copy" type="button">Copy PNG</button>
+          <button id="download" class="primary" type="button">Download PNG</button>
+        </div>
+
+        <div class="canvas-frame" id="frame">
+          <canvas id="pad"></canvas>
+          <div class="placeholder" id="placeholder">Sign here</div>
+        </div>
+
+        <div class="status" id="status"></div>
+      </div>
+    </div>
+
+    <script>
+      (() => {
+        const canvas = document.getElementById("pad");
+        const frame = document.getElementById("frame");
+        const placeholder = document.getElementById("placeholder");
+        const colorInput = document.getElementById("color");
+        const sizeInput = document.getElementById("size");
+        const clearBtn = document.getElementById("clear");
+        const downloadBtn = document.getElementById("download");
+        const copyBtn = document.getElementById("copy");
+        const status = document.getElementById("status");
+        const ctx = canvas.getContext("2d");
+
+        let drawing = false;
+        let hasInk = false;
+        let lastPoint = null;
+        let strokes = [];
+        let currentStroke = null;
+
+        function setStatus(msg, flash = false) {
+          status.textContent = msg;
+          status.classList.toggle("flash", flash);
+          if (msg) {
+            clearTimeout(setStatus._t);
+            setStatus._t = setTimeout(() => {
+              status.textContent = "";
+              status.classList.remove("flash");
+            }, 2200);
+          }
+        }
+
+        function resizeCanvas() {
+          const dpr = window.devicePixelRatio || 1;
+          const rect = frame.getBoundingClientRect();
+          canvas.width = Math.round(rect.width * dpr);
+          canvas.height = Math.round(rect.height * dpr);
+          ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+          redraw();
+        }
+
+        function redraw() {
+          const rect = frame.getBoundingClientRect();
+          ctx.clearRect(0, 0, rect.width, rect.height);
+          ctx.lineCap = "round";
+          ctx.lineJoin = "round";
+          for (const stroke of strokes) {
+            if (stroke.points.length < 2) continue;
+            ctx.strokeStyle = stroke.color;
+            ctx.lineWidth = stroke.size;
+            ctx.beginPath();
+            ctx.moveTo(stroke.points[0].x, stroke.points[0].y);
+            for (let i = 1; i < stroke.points.length; i++) {
+              const p = stroke.points[i];
+              ctx.lineTo(p.x, p.y);
+            }
+            ctx.stroke();
+          }
+        }
+
+        function pointFromEvent(e) {
+          const rect = canvas.getBoundingClientRect();
+          return {
+            x: e.clientX - rect.left,
+            y: e.clientY - rect.top,
+          };
+        }
+
+        function startDraw(e) {
+          if (e.button !== undefined && e.button !== 0) return;
+          drawing = true;
+          canvas.setPointerCapture?.(e.pointerId);
+          const p = pointFromEvent(e);
+          currentStroke = {
+            color: colorInput.value,
+            size: parseFloat(sizeInput.value),
+            points: [p],
+          };
+          strokes.push(currentStroke);
+          lastPoint = p;
+          hasInk = true;
+          placeholder.classList.add("hidden");
+          e.preventDefault();
+        }
+
+        function moveDraw(e) {
+          if (!drawing) return;
+          const p = pointFromEvent(e);
+          currentStroke.points.push(p);
+          ctx.strokeStyle = currentStroke.color;
+          ctx.lineWidth = currentStroke.size;
+          ctx.lineCap = "round";
+          ctx.lineJoin = "round";
+          ctx.beginPath();
+          ctx.moveTo(lastPoint.x, lastPoint.y);
+          ctx.lineTo(p.x, p.y);
+          ctx.stroke();
+          lastPoint = p;
+          e.preventDefault();
+        }
+
+        function endDraw(e) {
+          if (!drawing) return;
+          drawing = false;
+          currentStroke = null;
+          lastPoint = null;
+          e.preventDefault?.();
+        }
+
+        canvas.addEventListener("pointerdown", startDraw);
+        canvas.addEventListener("pointermove", moveDraw);
+        canvas.addEventListener("pointerup", endDraw);
+        canvas.addEventListener("pointercancel", endDraw);
+        canvas.addEventListener("pointerleave", endDraw);
+
+        clearBtn.addEventListener("click", () => {
+          strokes = [];
+          hasInk = false;
+          placeholder.classList.remove("hidden");
+          redraw();
+          setStatus("Cleared");
+        });
+
+        function exportBlob() {
+          const out = document.createElement("canvas");
+          out.width = canvas.width;
+          out.height = canvas.height;
+          const octx = out.getContext("2d");
+          octx.fillStyle = "#ffffff";
+          octx.fillRect(0, 0, out.width, out.height);
+          octx.drawImage(canvas, 0, 0);
+          return new Promise((resolve) => out.toBlob(resolve, "image/png"));
+        }
+
+        downloadBtn.addEventListener("click", async () => {
+          if (!hasInk) {
+            setStatus("Nothing to download — sign first");
+            return;
+          }
+          const blob = await exportBlob();
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          const ts = new Date().toISOString().replace(/[:.]/g, "-");
+          a.href = url;
+          a.download = `signature-${ts}.png`;
+          document.body.appendChild(a);
+          a.click();
+          a.remove();
+          URL.revokeObjectURL(url);
+          setStatus("Downloaded", true);
+        });
+
+        copyBtn.addEventListener("click", async () => {
+          if (!hasInk) {
+            setStatus("Nothing to copy — sign first");
+            return;
+          }
+          try {
+            const blob = await exportBlob();
+            await navigator.clipboard.write([new ClipboardItem({ "image/png": blob })]);
+            setStatus("Copied PNG to clipboard", true);
+          } catch (err) {
+            setStatus("Copy failed — your browser may block clipboard images");
+          }
+        });
+
+        const ro = new ResizeObserver(resizeCanvas);
+        ro.observe(frame);
+        resizeCanvas();
+      })();
+    </script>
+  </body>
+</html>
