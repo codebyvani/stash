@@ -92,6 +92,16 @@
         accent-color: var(--accent);
       }
 
+      .control input[type="checkbox"] {
+        accent-color: var(--accent);
+        cursor: pointer;
+      }
+
+      .control.disabled {
+        opacity: 0.45;
+        pointer-events: none;
+      }
+
       button {
         font: inherit;
         font-size: 13px;
@@ -201,6 +211,16 @@
             <span>Size</span>
             <input id="size" type="range" min="1" max="6" step="0.5" value="2.2" />
           </label>
+          <label class="control" title="Add outline around strokes">
+            <input id="outline" type="checkbox" />
+            <span>Outline</span>
+          </label>
+          <label class="control" id="outline-color-wrap" title="Outline color">
+            <input id="outline-color" type="color" value="#ffffff" />
+          </label>
+          <label class="control" id="outline-width-wrap" title="Outline thickness">
+            <input id="outline-width" type="range" min="0.5" max="5" step="0.5" value="2" />
+          </label>
           <div class="spacer"></div>
           <button id="clear" class="danger" type="button">Clear</button>
           <button id="copy" type="button">Copy PNG</button>
@@ -223,6 +243,11 @@
         const placeholder = document.getElementById("placeholder");
         const colorInput = document.getElementById("color");
         const sizeInput = document.getElementById("size");
+        const outlineInput = document.getElementById("outline");
+        const outlineColorInput = document.getElementById("outline-color");
+        const outlineWidthInput = document.getElementById("outline-width");
+        const outlineColorWrap = document.getElementById("outline-color-wrap");
+        const outlineWidthWrap = document.getElementById("outline-width-wrap");
         const clearBtn = document.getElementById("clear");
         const downloadBtn = document.getElementById("download");
         const copyBtn = document.getElementById("copy");
@@ -256,23 +281,46 @@
           redraw();
         }
 
+        function tracePath(stroke) {
+          ctx.beginPath();
+          ctx.moveTo(stroke.points[0].x, stroke.points[0].y);
+          for (let i = 1; i < stroke.points.length; i++) {
+            ctx.lineTo(stroke.points[i].x, stroke.points[i].y);
+          }
+          ctx.stroke();
+        }
+
         function redraw() {
           const rect = frame.getBoundingClientRect();
           ctx.clearRect(0, 0, rect.width, rect.height);
           ctx.lineCap = "round";
           ctx.lineJoin = "round";
+
+          const outlineOn = outlineInput.checked;
+          const outlineColor = outlineColorInput.value;
+          const outlineThickness = parseFloat(outlineWidthInput.value);
+
+          if (outlineOn) {
+            ctx.strokeStyle = outlineColor;
+            for (const stroke of strokes) {
+              if (stroke.points.length < 2) continue;
+              ctx.lineWidth = stroke.size + outlineThickness * 2;
+              tracePath(stroke);
+            }
+          }
+
           for (const stroke of strokes) {
             if (stroke.points.length < 2) continue;
             ctx.strokeStyle = stroke.color;
             ctx.lineWidth = stroke.size;
-            ctx.beginPath();
-            ctx.moveTo(stroke.points[0].x, stroke.points[0].y);
-            for (let i = 1; i < stroke.points.length; i++) {
-              const p = stroke.points[i];
-              ctx.lineTo(p.x, p.y);
-            }
-            ctx.stroke();
+            tracePath(stroke);
           }
+        }
+
+        function syncOutlineUi() {
+          const on = outlineInput.checked;
+          outlineColorWrap.classList.toggle("disabled", !on);
+          outlineWidthWrap.classList.toggle("disabled", !on);
         }
 
         function pointFromEvent(e) {
@@ -304,14 +352,7 @@
           if (!drawing) return;
           const p = pointFromEvent(e);
           currentStroke.points.push(p);
-          ctx.strokeStyle = currentStroke.color;
-          ctx.lineWidth = currentStroke.size;
-          ctx.lineCap = "round";
-          ctx.lineJoin = "round";
-          ctx.beginPath();
-          ctx.moveTo(lastPoint.x, lastPoint.y);
-          ctx.lineTo(p.x, p.y);
-          ctx.stroke();
+          redraw();
           lastPoint = p;
           e.preventDefault();
         }
@@ -374,6 +415,14 @@
           }
         });
 
+        outlineInput.addEventListener("change", () => {
+          syncOutlineUi();
+          redraw();
+        });
+        outlineColorInput.addEventListener("input", redraw);
+        outlineWidthInput.addEventListener("input", redraw);
+
+        syncOutlineUi();
         const ro = new ResizeObserver(resizeCanvas);
         ro.observe(frame);
         resizeCanvas();
