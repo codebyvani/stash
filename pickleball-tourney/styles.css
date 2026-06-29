@@ -4,10 +4,12 @@
   --muted: #666;
   --border: #e5e5e5;
   --accent: #2a7f3a;
+  --accent-bg: #e6f4e9;
   --danger: #c43a3a;
   --tier-beginner: #4ade80;
   --tier-intermediate: #fbbf24;
   --tier-advanced: #ef4444;
+  --gold: #f5b342;
 }
 
 * { box-sizing: border-box; }
@@ -31,11 +33,7 @@ header h1 {
   font-size: 1.5rem;
 }
 
-nav {
-  display: flex;
-  gap: 1rem;
-}
-
+nav { display: flex; gap: 1rem; }
 nav a {
   text-decoration: none;
   color: var(--muted);
@@ -43,14 +41,13 @@ nav a {
   border-radius: 4px;
   font-weight: 500;
 }
-
 nav a.active {
   color: var(--accent);
-  background: #e6f4e9;
+  background: var(--accent-bg);
 }
 
 main {
-  max-width: 1024px;
+  max-width: 1280px;
   margin: 2rem auto;
   padding: 0 2rem;
 }
@@ -67,6 +64,10 @@ h2 {
   border-bottom: 1px solid var(--border);
   padding-bottom: 0.5rem;
 }
+
+.muted { color: var(--muted); }
+
+/* ───── Pool standings ───── */
 
 .pools {
   display: grid;
@@ -102,6 +103,8 @@ th {
   letter-spacing: 0.05em;
 }
 
+/* ───── Pool match list ───── */
+
 .match {
   display: grid;
   grid-template-columns: 1fr auto 1fr;
@@ -131,9 +134,256 @@ th {
 
 .team-a { justify-content: flex-end; }
 
-.tier-1 { color: var(--tier-beginner); }
-.tier-2 { color: var(--tier-intermediate); }
-.tier-3 { color: var(--tier-advanced); }
+/* ───── Visual bracket ───── */
+
+.bracket-locked {
+  text-align: center;
+  padding: 3rem;
+  color: var(--muted);
+}
+
+.bracket-container {
+  margin-top: 1rem;
+}
+
+.bracket-rounds {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr auto;
+  gap: 2.5rem;
+  align-items: center;
+}
+
+.round {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  gap: 2rem;
+  min-height: 380px;
+}
+
+.round-label {
+  text-align: center;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 0.5rem;
+}
+
+.round[data-round="final"] { justify-content: center; }
+.round[data-round="champion"] { justify-content: center; }
+
+.bracket-match {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 0;
+  position: relative;
+  min-width: 180px;
+  overflow: visible;
+}
+
+.bracket-match .match-label {
+  background: #f3f4f6;
+  color: var(--muted);
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0.3rem 0.6rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.bracket-match .team {
+  display: grid;
+  grid-template-columns: 1.8rem 1fr;
+  align-items: center;
+  padding: 0.55rem 0.75rem;
+  font-size: 0.9rem;
+  border-bottom: 1px dashed var(--border);
+}
+
+.bracket-match .team:last-of-type {
+  border-bottom: none;
+}
+
+.bracket-match .team.winner {
+  background: var(--accent-bg);
+  font-weight: 600;
+  color: var(--accent);
+}
+
+.bracket-match .team.loser {
+  color: var(--muted);
+  text-decoration: line-through;
+  text-decoration-thickness: 1px;
+  opacity: 0.7;
+}
+
+.bracket-match .team.tbd {
+  color: var(--muted);
+  font-style: italic;
+}
+
+.bracket-match .team .seed {
+  color: var(--muted);
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.bracket-match .match-inputs {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  padding: 0.5rem;
+  background: #fafafa;
+  border-top: 1px solid var(--border);
+}
+
+.bracket-match .score-input {
+  width: 2.5rem;
+  padding: 0.2rem 0.3rem;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  font-size: 0.9rem;
+  text-align: center;
+  font-weight: 600;
+}
+
+.bracket-match .score-input:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: -1px;
+}
+
+.bracket-match .score-input:disabled {
+  background: #f3f4f6;
+  cursor: not-allowed;
+}
+
+.bracket-match .score-hint {
+  margin: 0;
+  padding: 0.25rem 0.5rem 0.4rem;
+  font-size: 0.7rem;
+  text-align: center;
+  color: var(--muted);
+  background: #fafafa;
+  border-top: 1px dashed var(--border);
+}
+
+.bracket-match.final-match {
+  border: 2px solid var(--gold);
+  background: linear-gradient(to bottom, #fff8e1, white 50%);
+}
+
+.bracket-match.final-match .match-label {
+  background: #fff3d0;
+  color: #8a6300;
+}
+
+/* Connector line stubs on the right of QF/SF cards */
+.round[data-round="qf"] .bracket-match::after,
+.round[data-round="sf"] .bracket-match::after {
+  content: '';
+  position: absolute;
+  right: -1.25rem;
+  top: 50%;
+  width: 1.25rem;
+  border-top: 1px solid var(--border);
+}
+
+/* Champion column */
+.champion-card {
+  text-align: center;
+  padding: 1.5rem 1rem;
+  border: 2px dashed var(--border);
+  border-radius: 8px;
+  min-width: 160px;
+  background: white;
+}
+
+.champion-card.crowned {
+  border: 2px solid var(--gold);
+  background: linear-gradient(to bottom, #fff8e1, white);
+}
+
+.champion-card .trophy {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+.champion-card .trophy.muted { opacity: 0.3; }
+
+.champion-card .champion-name {
+  font-weight: 700;
+  font-size: 1.05rem;
+}
+
+.champion-card .champion-name.muted {
+  font-weight: 400;
+  font-style: italic;
+  color: var(--muted);
+}
+
+/* 3rd place section */
+.third-place-section {
+  margin-top: 3rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.third-place-card {
+  width: 240px;
+}
+
+/* Seed list */
+.bracket-seed-list {
+  margin-top: 3rem;
+  padding: 1rem 1.5rem;
+  background: #f9fafb;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+}
+
+.bracket-seed-list h4 {
+  margin: 0 0 0.75rem 0;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--muted);
+}
+
+.bracket-seed-list ol {
+  margin: 0;
+  padding-left: 1.5rem;
+  font-size: 0.9rem;
+}
+
+.bracket-seed-list li {
+  padding: 0.2rem 0;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .bracket-rounds {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  .round {
+    min-height: auto;
+  }
+  .round[data-round="qf"] .bracket-match::after,
+  .round[data-round="sf"] .bracket-match::after {
+    display: none;
+  }
+}
+
+/* ───── Buttons ───── */
 
 button {
   padding: 0.5rem 1rem;
@@ -145,9 +395,7 @@ button {
   margin-right: 0.5rem;
 }
 
-button:hover {
-  background: #f0f0f0;
-}
+button:hover { background: #f0f0f0; }
 
 button.danger {
   border-color: var(--danger);

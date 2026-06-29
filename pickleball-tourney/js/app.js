@@ -4,18 +4,19 @@ import {
   poolMatches,
   playoffSeeds,
   poolStageComplete,
+  getBracketState,
+  getMatchIdByKey,
 } from './queries.js';
 import {
   renderPoolStandings,
   renderMatchList,
-  renderBracket,
+  renderVisualBracket,
   setActiveTab,
 } from './ui.js';
 
 async function main() {
   await init();
 
-  // Tab routing via hash
   const tab = (window.location.hash || '#info').slice(1);
   setActiveTab(tab);
 
@@ -26,9 +27,7 @@ async function main() {
   });
 
   document.querySelectorAll('nav a').forEach(a => {
-    a.addEventListener('click', () => {
-      setTimeout(refresh, 0);
-    });
+    a.addEventListener('click', () => setTimeout(refresh, 0));
   });
 
   document.getElementById('export-btn').addEventListener('click', exportSqlite);
@@ -51,15 +50,14 @@ function refreshScoring() {
   }
 
   const allMatches = ['A', 'B', 'C'].flatMap(p => poolMatches(p));
-  renderMatchList(document.getElementById('match-list'), allMatches, onScoreChange);
+  renderMatchList(document.getElementById('match-list'), allMatches, onPoolScoreChange);
 }
 
 function refreshBracket() {
   const container = document.getElementById('bracket-view');
   if (!container) return;
-  const complete = poolStageComplete();
-  const seeds = complete ? playoffSeeds() : [];
-  renderBracket(container, seeds, complete);
+  const state = getBracketState();
+  renderVisualBracket(container, state, onPlayoffScoreChange);
 }
 
 function refreshAdmin() {
@@ -78,7 +76,19 @@ function refreshAdmin() {
   ].join('\n');
 }
 
-function onScoreChange(matchId, side, raw) {
+function onPoolScoreChange(matchId, side, raw) {
+  const val = raw === '' ? null : Number(raw);
+  const col = side === 'a' ? 'score_a' : 'score_b';
+  run(
+    `UPDATE matches SET ${col} = ?, played_at = COALESCE(played_at, datetime('now')) WHERE id = ?`,
+    [val, matchId]
+  );
+  refresh();
+}
+
+function onPlayoffScoreChange(key, side, raw) {
+  const matchId = getMatchIdByKey(key);
+  if (matchId == null) return;
   const val = raw === '' ? null : Number(raw);
   const col = side === 'a' ? 'score_a' : 'score_b';
   run(
