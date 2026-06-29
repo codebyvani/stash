@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>🥒 SGDC Pickle Ball mini Tourney</title>
+  <link rel="stylesheet" href="styles.css" />
+  <script src="https://cdn.jsdelivr.net/npm/sql.js@1.10.3/dist/sql-wasm.js"></script>
+</head>
+<body>
+  <header>
+    <h1>🥒 SGDC Pickle Ball mini Tourney</h1>
+    <nav>
+      <a href="#info" data-tab="info">Info</a>
+      <a href="#scoring" data-tab="scoring">Scoring</a>
+      <a href="#bracket" data-tab="bracket">Bracket</a>
+      <a href="#admin" data-tab="admin">Admin</a>
+    </nav>
+  </header>
+
+  <main>
+    <!-- INFO -->
+    <section id="info" class="tab">
+      <h2>Format</h2>
+      <p>Mixed-skill doubles, single open division. 12 teams, 3 pools of 4, round-robin group stage then 6-team knockout bracket.</p>
+
+      <h3>Skill tiers (1 pt each)</h3>
+      <ul>
+        <li>🟢 Beginner = 1</li>
+        <li>🟡 Intermediate = 2</li>
+        <li>🔴 Advanced = 3</li>
+      </ul>
+
+      <p><strong>Team balance rule:</strong> combined points must equal 3 or 4.</p>
+
+      <h3>Scoring</h3>
+      <ul>
+        <li>Group Stage: single game to 11, side-out scoring, win by 2</li>
+        <li>Knockout QF: single game to 11</li>
+        <li>Knockout SF: single game to 15</li>
+        <li>3rd-place playoff: single game to 11</li>
+        <li>Final: best of 3 games to 11</li>
+      </ul>
+
+      <h3>Schedule</h3>
+      <ul>
+        <li>Session 1 — Tue Jul 7 — Round 1</li>
+        <li>Session 2 — Fri Jul 17 — Round 2</li>
+        <li>Session 3 — Tue Jul 28 — Round 3</li>
+        <li>Playoffs — TBD (target 1st week of August)</li>
+      </ul>
+    </section>
+
+    <!-- SCORING -->
+    <section id="scoring" class="tab" hidden>
+      <h2>Group Stage Scoring</h2>
+
+      <div class="pools">
+        <div class="pool">
+          <h3>Pool A</h3>
+          <div id="pool-a-standings"></div>
+        </div>
+        <div class="pool">
+          <h3>Pool B</h3>
+          <div id="pool-b-standings"></div>
+        </div>
+        <div class="pool">
+          <h3>Pool C</h3>
+          <div id="pool-c-standings"></div>
+        </div>
+      </div>
+
+      <h3>Matches</h3>
+      <div id="match-list"></div>
+    </section>
+
+    <!-- BRACKET -->
+    <section id="bracket" class="tab" hidden>
+      <h2>Championship Bracket</h2>
+      <p>Available once Group Stage is complete.</p>
+      <div id="bracket-view"></div>
+    </section>
+
+    <!-- ADMIN -->
+    <section id="admin" class="tab" hidden>
+      <h2>Admin</h2>
+      <p>Use these only when you know what you're doing.</p>
+      <button id="export-btn">Export .sqlite snapshot</button>
+      <button id="clear-btn" class="danger">Clear database</button>
+
+      <h3>Status</h3>
+      <pre id="db-status"></pre>
+    </section>
+  </main>
+
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
