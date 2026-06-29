@@ -12,6 +12,7 @@
     <h1>🥒 SGDC Pickle Ball mini Tourney</h1>
     <nav>
       <a href="#info" data-tab="info">Info</a>
+      <a href="#teams" data-tab="teams">Teams</a>
       <a href="#scoring" data-tab="scoring">Scoring</a>
       <a href="#bracket" data-tab="bracket">Bracket</a>
       <a href="#admin" data-tab="admin">Admin</a>
@@ -22,13 +23,18 @@
     <!-- INFO -->
     <section id="info" class="tab">
       <h2>Format</h2>
-      <p>Mixed-skill doubles, single open division. 12 teams, 3 pools of 4, round-robin group stage then 6-team knockout bracket.</p>
+      <p>Mixed-skill doubles, single open division. 12 teams, 3 pools of 4, round-robin Group Stage then 6-team knockout bracket.</p>
 
-      <h3>Skill tiers (1 pt each)</h3>
+      <p class="info-link">
+        📋 Full tournament details (rules, schedule, prize pool, skill-tier guide) live in Notion:
+        <a href="https://app.notion.com/p/Pickle-Ball-Tourney-389ee7728c578075bd41f33ee59429b9" target="_blank" rel="noopener">Pickle Ball Tourney Notion page →</a>
+      </p>
+
+      <h3>Skill tiers</h3>
       <ul>
-        <li>🟢 Beginner = 1</li>
-        <li>🟡 Intermediate = 2</li>
-        <li>🔴 Advanced = 3</li>
+        <li>🟢 Beginner = 1 point</li>
+        <li>🟡 Intermediate = 2 points</li>
+        <li>🔴 Advanced = 3 points</li>
       </ul>
 
       <p><strong>Team balance rule:</strong> combined points must equal 3 or 4.</p>
@@ -44,11 +50,26 @@
 
       <h3>Schedule</h3>
       <ul>
-        <li>Session 1 — Tue Jul 7 — Round 1</li>
-        <li>Session 2 — Fri Jul 17 — Round 2</li>
-        <li>Session 3 — Tue Jul 28 — Round 3</li>
+        <li>Session 1 — Tue Jul 7 — Round 1 (Magnum, 2 courts)</li>
+        <li>Session 2 — Fri Jul 17 — Round 2 (Magnum, 1 court)</li>
+        <li>Session 3 — Tue Jul 28 — Round 3 (Magnum, 2 courts)</li>
         <li>Playoffs — TBD (target 1st week of August)</li>
       </ul>
+
+      <h3>How to use this site</h3>
+      <ol>
+        <li>Open the <a href="#teams">Teams</a> tab and add each approved team as signups roll in.</li>
+        <li>Once all 12 teams are registered, click <strong>Draw pools</strong> for a balanced snake-draft.</li>
+        <li>During each session, enter scores in the <a href="#scoring">Scoring</a> tab — standings update live.</li>
+        <li>After all 18 pool matches are scored, the <a href="#bracket">Bracket</a> tab unlocks with seeded playoffs.</li>
+        <li>The <a href="#admin">Admin</a> tab lets you export a .sqlite snapshot or clear everything.</li>
+      </ol>
+    </section>
+
+    <!-- TEAMS -->
+    <section id="teams" class="tab" hidden>
+      <h2>Teams</h2>
+      <div id="teams-content"></div>
     </section>
 
     <!-- SCORING -->
@@ -77,14 +98,13 @@
     <!-- BRACKET -->
     <section id="bracket" class="tab" hidden>
       <h2>Championship Bracket</h2>
-      <p>Available once Group Stage is complete.</p>
       <div id="bracket-view"></div>
     </section>
 
     <!-- ADMIN -->
     <section id="admin" class="tab" hidden>
       <h2>Admin</h2>
-      <p>Use these only when you know what you're doing.</p>
+      <p>Database export and reset tools.</p>
       <button id="export-btn">Export .sqlite snapshot</button>
       <button id="clear-btn" class="danger">Clear database</button>
 

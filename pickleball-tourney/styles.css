@@ -414,3 +414,344 @@ pre {
   font-size: 0.85rem;
   overflow-x: auto;
 }
+
+/* ───── Info tab ───── */
+
+.info-link {
+  background: var(--accent-bg);
+  border-left: 3px solid var(--accent);
+  padding: 0.75rem 1rem;
+  border-radius: 4px;
+  margin: 1rem 0;
+}
+
+.info-link a {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+/* ───── Teams tab ───── */
+
+.teams-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.5rem;
+}
+
+.teams-header p {
+  margin: 0;
+  color: var(--muted);
+  flex: 1;
+}
+
+.teams-counter {
+  background: #f3f4f6;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  white-space: nowrap;
+}
+
+.teams-counter .count {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.locked-badge {
+  margin-left: 0.75rem;
+  padding: 0.15rem 0.5rem;
+  border-radius: 4px;
+  background: var(--accent-bg);
+  color: var(--accent);
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.add-team-form {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0;
+  margin-bottom: 1.5rem;
+  background: #fafafa;
+}
+
+.add-team-form summary {
+  padding: 0.75rem 1rem;
+  cursor: pointer;
+  user-select: none;
+}
+
+.add-team-form summary:hover {
+  background: #f3f4f6;
+}
+
+.add-team-form .form-body {
+  padding: 1rem;
+  border-top: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.add-team-form label {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.85rem;
+  color: var(--muted);
+  font-weight: 600;
+  gap: 0.25rem;
+}
+
+.add-team-form input,
+.add-team-form select {
+  padding: 0.5rem 0.65rem;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  font-size: 0.95rem;
+  background: white;
+  color: var(--fg);
+  font-weight: 400;
+}
+
+.add-team-form input:focus,
+.add-team-form select:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: -1px;
+}
+
+.player-row {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 0.75rem;
+}
+
+.team-validity {
+  padding: 0.4rem 0.75rem;
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+
+.team-validity.valid {
+  background: var(--accent-bg);
+  color: var(--accent);
+}
+
+.team-validity.invalid {
+  background: #fee;
+  color: var(--danger);
+}
+
+.add-team-form button {
+  align-self: flex-start;
+  padding: 0.55rem 1.25rem;
+  background: var(--accent);
+  color: white;
+  border-color: var(--accent);
+  font-weight: 600;
+}
+
+.add-team-form button:hover:not(:disabled) {
+  background: #1f6b2d;
+}
+
+.add-team-form button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background: var(--muted);
+  border-color: var(--muted);
+}
+
+.teams-list-section {
+  margin-bottom: 2rem;
+}
+
+.teams-list-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 0.75rem;
+}
+
+.team-card {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 0.75rem 1rem;
+  position: relative;
+}
+
+.team-card.locked {
+  background: #fafafa;
+}
+
+.team-card-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.team-card .players {
+  font-size: 0.85rem;
+  color: var(--muted);
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+  margin-top: 0.15rem;
+}
+
+.team-card .players .plus,
+.team-card .players .pts {
+  color: var(--muted);
+  font-weight: 500;
+}
+
+.team-card .delete-team-btn {
+  background: transparent;
+  border: none;
+  color: var(--muted);
+  font-size: 1.4rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0 0.4rem;
+  margin: 0;
+}
+
+.team-card .delete-team-btn:hover {
+  color: var(--danger);
+  background: transparent;
+}
+
+.pool-badge {
+  display: inline-block;
+  padding: 0.15rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  margin-right: 0.5rem;
+}
+
+.pool-badge.pool-A { background: #dbeafe; color: #1e40af; }
+.pool-badge.pool-B { background: #fef3c7; color: #92400e; }
+.pool-badge.pool-C { background: #fce7f3; color: #9d174d; }
+
+/* Pool draw preview */
+
+.pool-draw-section {
+  background: #fafafa;
+  padding: 1.25rem;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+}
+
+.pool-draw-section h3 {
+  margin-top: 0;
+}
+
+.pool-draw-section #preview-draw-btn {
+  background: var(--accent);
+  color: white;
+  border-color: var(--accent);
+  font-weight: 600;
+}
+
+.pool-draw-section #preview-draw-btn:hover {
+  background: #1f6b2d;
+}
+
+.pool-preview {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+  margin: 1rem 0;
+}
+
+.pool-preview-col {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 0.75rem;
+}
+
+.pool-preview-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.pool-preview-col h4 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.team-mini {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.4rem 0;
+  font-size: 0.9rem;
+}
+
+.team-mini .seed-num {
+  width: 1.2rem;
+  height: 1.2rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #e5e7eb;
+  border-radius: 50%;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--muted);
+}
+
+.team-mini strong {
+  flex: 1;
+}
+
+.team-mini .pts {
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+.draw-actions {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+#lock-draw-btn.primary {
+  background: var(--accent);
+  color: white;
+  border-color: var(--accent);
+  font-weight: 600;
+}
+
+#lock-draw-btn.primary:hover {
+  background: #1f6b2d;
+}
+
+/* Empty state on Scoring tab */
+
+.empty-state {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: var(--muted);
+  background: #fafafa;
+  border-radius: 8px;
+  border: 1px dashed var(--border);
+}
+
+.empty-state a {
+  color: var(--accent);
+  font-weight: 600;
+}

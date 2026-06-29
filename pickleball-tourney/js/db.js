@@ -1,5 +1,3 @@
-import { SEED_TEAMS, SEED_MATCHES } from './seed.js';
-
 const STORAGE_KEY = 'pickleball-tourney-db';
 
 let db;
@@ -9,8 +7,8 @@ const SCHEMA = `
   CREATE TABLE teams (
     id INTEGER PRIMARY KEY,
     name TEXT NOT NULL,
-    pool TEXT NOT NULL,
-    seed_in_pool INTEGER NOT NULL,
+    pool TEXT,
+    seed_in_pool INTEGER,
     player1 TEXT,
     player1_skill INTEGER,
     player2 TEXT,
@@ -37,6 +35,7 @@ const SCHEMA = `
   );
 
   INSERT INTO meta (key, value) VALUES ('created_at', datetime('now'));
+  INSERT INTO meta (key, value) VALUES ('schema_version', '2');
 `;
 
 export async function init() {
@@ -50,46 +49,9 @@ export async function init() {
   } else {
     db = new SQL.Database();
     db.exec(SCHEMA);
-    seed();
     save();
   }
   return db;
-}
-
-function seed() {
-  const teamStmt = db.prepare(
-    `INSERT INTO teams (id, name, pool, seed_in_pool, player1, player1_skill, player2, player2_skill)
-     VALUES ($id, $name, $pool, $seed, $p1, $s1, $p2, $s2)`
-  );
-  for (const t of SEED_TEAMS) {
-    teamStmt.run({
-      $id: t.id,
-      $name: t.name,
-      $pool: t.pool,
-      $seed: t.seed,
-      $p1: t.player1,
-      $s1: t.player1_skill,
-      $p2: t.player2,
-      $s2: t.player2_skill,
-    });
-  }
-  teamStmt.free();
-
-  const matchStmt = db.prepare(
-    `INSERT INTO matches (id, stage, round, pool, team_a_id, team_b_id)
-     VALUES ($id, $stage, $round, $pool, $a, $b)`
-  );
-  for (const m of SEED_MATCHES) {
-    matchStmt.run({
-      $id: m.id,
-      $stage: m.stage,
-      $round: m.round,
-      $pool: m.pool,
-      $a: m.team_a_id,
-      $b: m.team_b_id,
-    });
-  }
-  matchStmt.free();
 }
 
 export function save() {

@@ -1,18 +1,30 @@
 import { init, run, exportSqlite, clear, exec } from './db.js';
 import {
+  getAllTeams,
+  addTeam,
+  deleteTeam,
+  previewPoolDraw,
+  lockPools,
+  resetPools,
+  isPoolDrawLocked,
   poolStandings,
   poolMatches,
-  playoffSeeds,
   poolStageComplete,
   getBracketState,
   getMatchIdByKey,
 } from './queries.js';
 import {
+  renderTeamsTab,
+  renderDrawPreview,
   renderPoolStandings,
   renderMatchList,
+  renderScoringEmpty,
   renderVisualBracket,
   setActiveTab,
 } from './ui.js';
+
+// In-memory preview state for the pool draw before it's locked
+let pendingDraw = null;
 
 async function main() {
   await init();
@@ -37,12 +49,69 @@ async function main() {
 }
 
 function refresh() {
+  refreshTeams();
   refreshScoring();
   refreshBracket();
   refreshAdmin();
 }
 
+function refreshTeams() {
+  const container = document.getElementById('teams-content');
+  if (!container) return;
+  const teams = getAllTeams();
+  const locked = isPoolDrawLocked();
+
+  renderTeamsTab(container, teams, locked, {
+    onAdd(team) {
+      addTeam(team);
+      pendingDraw = null;
+      refresh();
+    },
+    onDelete(id) {
+      deleteTeam(id);
+      pendingDraw = null;
+      refresh();
+    },
+    onPreviewDraw() {
+      try {
+        pendingDraw = previewPoolDraw();
+        renderDrawPreview(container, pendingDraw, {
+          onPreviewDraw() {
+            pendingDraw = previewPoolDraw();
+            renderDrawPreview(container, pendingDraw, this);
+          },
+          onLock(pools) {
+            lockPools(pools);
+            pendingDraw = null;
+            refresh();
+          },
+        });
+      } catch (err) {
+        alert(err.message);
+      }
+    },
+    onReset() {
+      resetPools();
+      pendingDraw = null;
+      refresh();
+    },
+  });
+}
+
 function refreshScoring() {
+  if (!isPoolDrawLocked()) {
+    for (const pool of ['A', 'B', 'C']) {
+      const el = document.getElementById(`pool-${pool.toLowerCase()}-standings`);
+      if (el) el.innerHTML = '';
+    }
+    const matchList = document.getElementById('match-list');
+    if (matchList) {
+      renderScoringEmpty(matchList,
+        '🔒 Pools haven\'t been drawn yet. Go to the <a href="#teams">Teams</a> tab to set up the roster and draw pools.');
+    }
+    return;
+  }
+
   for (const pool of ['A', 'B', 'C']) {
     const standings = poolStandings(pool);
     const el = document.getElementById(`pool-${pool.toLowerCase()}-standings`);
@@ -63,15 +132,15 @@ function refreshBracket() {
 function refreshAdmin() {
   const el = document.getElementById('db-status');
   if (!el) return;
-  const teamCount = exec('SELECT COUNT(*) AS n FROM teams')[0]?.values[0][0];
-  const matchCount = exec('SELECT COUNT(*) AS n FROM matches')[0]?.values[0][0];
-  const playedCount = exec(
-    'SELECT COUNT(*) AS n FROM matches WHERE score_a IS NOT NULL'
-  )[0]?.values[0][0];
+  const teamCount = exec('SELECT COUNT(*) AS n FROM teams')[0]?.values[0][0] ?? 0;
+  const matchCount = exec('SELECT COUNT(*) AS n FROM matches')[0]?.values[0][0] ?? 0;
+  const playedCount =
+    exec('SELECT COUNT(*) AS n FROM matches WHERE score_a IS NOT NULL')[0]?.values[0][0] ?? 0;
   el.textContent = [
     `Teams:           ${teamCount}`,
     `Matches total:   ${matchCount}`,
     `Matches played:  ${playedCount}`,
+    `Pools locked:    ${isPoolDrawLocked() ? 'yes' : 'no'}`,
     `Pool complete:   ${poolStageComplete() ? 'yes' : 'no'}`,
   ].join('\n');
 }
