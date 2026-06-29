@@ -59,21 +59,76 @@ export function save() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
 }
 
-export function clear() {
-  const typed = prompt('Type CLEAR to wipe the tournament:');
-  if (typed !== 'CLEAR') return;
+const RESET_PASSWORD = 'pickles';
+
+function askPassword(message) {
+  return new Promise(resolve => {
+    const overlay = document.createElement('div');
+    overlay.className = 'modal-overlay';
+    overlay.innerHTML = `
+      <div class="modal" role="dialog" aria-modal="true">
+        <p class="modal-message">${message}</p>
+        <input type="password" id="modal-password" placeholder="Password" autocomplete="off" />
+        <p class="modal-error" id="modal-error" hidden>Wrong password.</p>
+        <div class="modal-actions">
+          <button type="button" id="modal-cancel">Cancel</button>
+          <button type="button" id="modal-ok" class="primary">Confirm</button>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(overlay);
+
+    const input = overlay.querySelector('#modal-password');
+    const errEl = overlay.querySelector('#modal-error');
+
+    const finish = (result) => {
+      overlay.remove();
+      document.removeEventListener('keydown', keyHandler);
+      resolve(result);
+    };
+    const submit = () => {
+      const value = input.value;
+      if (value === '') {
+        errEl.hidden = false;
+        errEl.textContent = 'Enter the password.';
+        input.focus();
+        return;
+      }
+      finish(value);
+    };
+
+    overlay.querySelector('#modal-cancel').addEventListener('click', () => finish(null));
+    overlay.querySelector('#modal-ok').addEventListener('click', submit);
+    input.addEventListener('keydown', e => {
+      if (e.key === 'Enter') { e.preventDefault(); submit(); }
+    });
+    const keyHandler = e => { if (e.key === 'Escape') finish(null); };
+    document.addEventListener('keydown', keyHandler);
+    overlay.addEventListener('click', e => { if (e.target === overlay) finish(null); });
+
+    setTimeout(() => input.focus(), 30);
+  });
+}
+
+export async function clear() {
+  const entered = await askPassword('Enter the password to reset the tournament:');
+  if (entered === null) return;
+  if (entered !== RESET_PASSWORD) {
+    alert('Wrong password.');
+    return;
+  }
   localStorage.removeItem(STORAGE_KEY);
   location.reload();
 }
 
 export function exportSqlite() {
   const data = db.export();
-  const blob = new Blob([data], { type: 'application/x-sqlite3' });
+  const blob = new Blob([data], { type: 'application/octet-stream' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
   const stamp = new Date().toISOString().slice(0, 10);
-  a.download = `pickleball-tourney-${stamp}.sqlite`;
+  a.download = `pickleball-tourney-backup-${stamp}.db`;
   a.click();
   URL.revokeObjectURL(url);
 }
