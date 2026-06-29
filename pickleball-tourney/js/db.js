@@ -61,24 +61,51 @@ export function save() {
 
 const RESET_PASSWORD = 'pickles';
 
-function askPassword(message) {
+function showResetModal() {
   return new Promise(resolve => {
     const overlay = document.createElement('div');
     overlay.className = 'modal-overlay';
     overlay.innerHTML = `
-      <div class="modal" role="dialog" aria-modal="true">
-        <p class="modal-message">${message}</p>
-        <input type="password" id="modal-password" placeholder="Password" autocomplete="off" />
-        <p class="modal-error" id="modal-error" hidden>Wrong password.</p>
+      <div class="modal modal-wide" role="dialog" aria-modal="true">
+        <h3 class="modal-title">Reset tournament data</h3>
+        <p class="modal-message">Pick what to clear. Higher-level options include the ones above them.</p>
+        <div class="reset-options">
+          <label class="reset-option">
+            <input type="checkbox" id="reset-scores" />
+            <div class="reset-option-body">
+              <strong>Match scores only</strong>
+              <div class="muted">Wipes all entered scores. Teams, pool draw, and match schedule remain.</div>
+            </div>
+          </label>
+          <label class="reset-option">
+            <input type="checkbox" id="reset-pools" />
+            <div class="reset-option-body">
+              <strong>Pool draw + matches</strong>
+              <div class="muted">Unassigns pools and deletes all matches (scores included). Team roster stays.</div>
+            </div>
+          </label>
+          <label class="reset-option">
+            <input type="checkbox" id="reset-teams" />
+            <div class="reset-option-body">
+              <strong>Team roster (everything)</strong>
+              <div class="muted">Deletes all teams along with pools and matches. Full fresh start.</div>
+            </div>
+          </label>
+        </div>
+        <label class="reset-password-label">
+          Password
+          <input type="password" id="modal-password" placeholder="Password" autocomplete="off" />
+        </label>
+        <p class="modal-error" id="modal-error" hidden></p>
         <div class="modal-actions">
           <button type="button" id="modal-cancel">Cancel</button>
-          <button type="button" id="modal-ok" class="primary">Confirm</button>
+          <button type="button" id="modal-ok" class="danger primary">Reset selected</button>
         </div>
       </div>
     `;
     document.body.appendChild(overlay);
 
-    const input = overlay.querySelector('#modal-password');
+    const pwInput = overlay.querySelector('#modal-password');
     const errEl = overlay.querySelector('#modal-error');
 
     const finish = (result) => {
@@ -87,37 +114,59 @@ function askPassword(message) {
       resolve(result);
     };
     const submit = () => {
-      const value = input.value;
-      if (value === '') {
+      const scores = overlay.querySelector('#reset-scores').checked;
+      const pools = overlay.querySelector('#reset-pools').checked;
+      const teams = overlay.querySelector('#reset-teams').checked;
+      const password = pwInput.value;
+
+      if (!scores && !pools && !teams) {
         errEl.hidden = false;
-        errEl.textContent = 'Enter the password.';
-        input.focus();
+        errEl.textContent = 'Pick at least one thing to reset.';
         return;
       }
-      finish(value);
+      if (password === '') {
+        errEl.hidden = false;
+        errEl.textContent = 'Enter the password.';
+        pwInput.focus();
+        return;
+      }
+      finish({ scores, pools, teams, password });
     };
 
     overlay.querySelector('#modal-cancel').addEventListener('click', () => finish(null));
     overlay.querySelector('#modal-ok').addEventListener('click', submit);
-    input.addEventListener('keydown', e => {
+    pwInput.addEventListener('keydown', e => {
       if (e.key === 'Enter') { e.preventDefault(); submit(); }
     });
     const keyHandler = e => { if (e.key === 'Escape') finish(null); };
     document.addEventListener('keydown', keyHandler);
     overlay.addEventListener('click', e => { if (e.target === overlay) finish(null); });
 
-    setTimeout(() => input.focus(), 30);
+    setTimeout(() => pwInput.focus(), 30);
   });
 }
 
 export async function clear() {
-  const entered = await askPassword('Enter the password to reset the tournament:');
-  if (entered === null) return;
-  if (entered !== RESET_PASSWORD) {
+  const choice = await showResetModal();
+  if (!choice) return;
+
+  if (choice.password !== RESET_PASSWORD) {
     alert('Wrong password.');
     return;
   }
-  localStorage.removeItem(STORAGE_KEY);
+
+  // Apply highest-level effect that's selected (each level includes the ones above)
+  if (choice.teams) {
+    db.exec('DELETE FROM matches');
+    db.exec('DELETE FROM teams');
+  } else if (choice.pools) {
+    db.exec('DELETE FROM matches');
+    db.exec('UPDATE teams SET pool = NULL, seed_in_pool = NULL');
+  } else if (choice.scores) {
+    db.exec('UPDATE matches SET score_a = NULL, score_b = NULL, played_at = NULL');
+  }
+
+  save();
   location.reload();
 }
 
