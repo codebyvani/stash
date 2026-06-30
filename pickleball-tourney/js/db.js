@@ -61,6 +61,65 @@ export function save() {
 
 const RESET_PASSWORD = 'pickles';
 
+export function askPassword(message) {
+  return new Promise(resolve => {
+    const overlay = document.createElement('div');
+    overlay.className = 'modal-overlay';
+    overlay.innerHTML = `
+      <div class="modal" role="dialog" aria-modal="true">
+        <p class="modal-message">${message}</p>
+        <input type="password" id="modal-password" placeholder="Password" autocomplete="off" />
+        <p class="modal-error" id="modal-error" hidden></p>
+        <div class="modal-actions">
+          <button type="button" id="modal-cancel">Cancel</button>
+          <button type="button" id="modal-ok" class="primary">Confirm</button>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(overlay);
+
+    const input = overlay.querySelector('#modal-password');
+    const errEl = overlay.querySelector('#modal-error');
+
+    const finish = (result) => {
+      overlay.remove();
+      document.removeEventListener('keydown', keyHandler);
+      resolve(result);
+    };
+    const submit = () => {
+      const value = input.value;
+      if (value === '') {
+        errEl.hidden = false;
+        errEl.textContent = 'Enter the password.';
+        input.focus();
+        return;
+      }
+      finish(value);
+    };
+
+    overlay.querySelector('#modal-cancel').addEventListener('click', () => finish(null));
+    overlay.querySelector('#modal-ok').addEventListener('click', submit);
+    input.addEventListener('keydown', e => {
+      if (e.key === 'Enter') { e.preventDefault(); submit(); }
+    });
+    const keyHandler = e => { if (e.key === 'Escape') finish(null); };
+    document.addEventListener('keydown', keyHandler);
+    overlay.addEventListener('click', e => { if (e.target === overlay) finish(null); });
+
+    setTimeout(() => input.focus(), 30);
+  });
+}
+
+export async function verifyPassword(message) {
+  const entered = await askPassword(message);
+  if (entered === null) return false;
+  if (entered !== RESET_PASSWORD) {
+    alert('Wrong password.');
+    return false;
+  }
+  return true;
+}
+
 function showResetModal() {
   return new Promise(resolve => {
     const overlay = document.createElement('div');

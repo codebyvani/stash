@@ -1,4 +1,4 @@
-import { init, run, exportSqlite, clear, exec } from './db.js';
+import { init, run, exportSqlite, clear, exec, verifyPassword } from './db.js';
 import {
   getAllTeams,
   addTeam,
@@ -67,7 +67,8 @@ function refreshTeams() {
       pendingDraw = null;
       refresh();
     },
-    onDelete(id) {
+    async onDelete(id) {
+      if (!await verifyPassword('Enter password to delete this team:')) return;
       deleteTeam(id);
       pendingDraw = null;
       refresh();
@@ -80,7 +81,8 @@ function refreshTeams() {
             pendingDraw = previewPoolDraw();
             renderDrawPreview(container, pendingDraw, this);
           },
-          onLock(pools) {
+          async onLock(pools) {
+            if (!await verifyPassword('Enter password to lock the pool draw and start the tournament:')) return;
             lockPools(pools);
             pendingDraw = null;
             refresh();
@@ -90,7 +92,8 @@ function refreshTeams() {
         alert(err.message);
       }
     },
-    onReset() {
+    async onReset() {
+      if (!await verifyPassword('Enter password to reset pools (clears all scores and pool assignments):')) return;
       resetPools();
       pendingDraw = null;
       refresh();

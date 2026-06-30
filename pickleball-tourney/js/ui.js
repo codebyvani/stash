@@ -123,7 +123,7 @@ export function renderTeamsTab(container, teams, isLocked, handlers) {
     container.querySelectorAll('.delete-team-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         const id = Number(btn.dataset.teamId);
-        if (confirm('Delete this team?')) handlers.onDelete(id);
+        handlers.onDelete(id);
       });
     });
 
@@ -134,9 +134,7 @@ export function renderTeamsTab(container, teams, isLocked, handlers) {
     }
   } else {
     container.querySelector('#reset-pools-btn')?.addEventListener('click', () => {
-      if (confirm('Reset pools? This wipes all scores and pool assignments.')) {
-        handlers.onReset();
-      }
+      handlers.onReset();
     });
   }
 }
@@ -174,9 +172,7 @@ export function renderDrawPreview(container, pools, handlers) {
 
   targetEl.querySelector('#reroll-btn').addEventListener('click', () => handlers.onPreviewDraw());
   targetEl.querySelector('#lock-draw-btn').addEventListener('click', () => {
-    if (confirm('Lock in this pool assignment? You can reset later if needed.')) {
-      handlers.onLock(pools);
-    }
+    handlers.onLock(pools);
   });
 }
 
