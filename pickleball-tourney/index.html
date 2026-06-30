@@ -105,8 +105,12 @@
     <section id="admin" class="tab" hidden>
       <h2>Admin</h2>
       <p>Backup and reset tools.</p>
-      <button id="export-btn">Download backup</button>
-      <button id="clear-btn" class="danger">Reset tournament</button>
+      <div class="admin-actions">
+        <button id="export-btn">⬇ Export backup</button>
+        <button id="import-btn">⬆ Import backup</button>
+        <input type="file" id="import-file" accept=".db,.sqlite" hidden />
+        <button id="clear-btn" class="danger">Reset tournament</button>
+      </div>
 
       <h3>Status</h3>
       <pre id="db-status"></pre>

@@ -1,4 +1,4 @@
-import { init, run, exportSqlite, clear, exec, verifyPassword } from './db.js';
+import { init, run, exportSqlite, importBackup, clear, exec, verifyPassword } from './db.js';
 import {
   getAllTeams,
   addTeam,
@@ -44,6 +44,14 @@ async function main() {
 
   document.getElementById('export-btn').addEventListener('click', exportSqlite);
   document.getElementById('clear-btn').addEventListener('click', clear);
+
+  const fileInput = document.getElementById('import-file');
+  document.getElementById('import-btn').addEventListener('click', () => fileInput.click());
+  fileInput.addEventListener('change', async e => {
+    const file = e.target.files[0];
+    e.target.value = '';
+    if (file) await importBackup(file);
+  });
 
   refresh();
 }

@@ -241,6 +241,41 @@ export function exportSqlite() {
   URL.revokeObjectURL(url);
 }
 
+export async function importBackup(file) {
+  if (!file) return;
+
+  const ok = await verifyPassword(
+    `Enter password to import "${file.name}". This will replace the current tournament data:`
+  );
+  if (!ok) return;
+
+  try {
+    const buffer = await file.arrayBuffer();
+    const bytes = new Uint8Array(buffer);
+    const newDb = new SQL.Database(bytes);
+
+    // Validate the backup has our expected tables
+    const result = newDb.exec("SELECT name FROM sqlite_master WHERE type='table'");
+    const tables = result[0]?.values.flat() || [];
+    const required = ['teams', 'matches', 'meta'];
+    const missing = required.filter(t => !tables.includes(t));
+    if (missing.length) {
+      newDb.close();
+      alert(
+        `Import failed: backup doesn't have the expected structure (missing tables: ${missing.join(', ')}).`
+      );
+      return;
+    }
+
+    if (db) db.close();
+    db = newDb;
+    save();
+    location.reload();
+  } catch (err) {
+    alert(`Import failed: ${err.message || err}`);
+  }
+}
+
 export function exec(sql, params = []) {
   return db.exec(sql, params);
 }
