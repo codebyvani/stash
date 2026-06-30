@@ -38,6 +38,20 @@ const SCHEMA = `
   INSERT INTO meta (key, value) VALUES ('schema_version', '2');
 `;
 
+const SEED_SNAPSHOT_URL = 'seeds/current.db';
+
+async function tryLoadSeedSnapshot() {
+  try {
+    const response = await fetch(SEED_SNAPSHOT_URL, { cache: 'no-store' });
+    if (!response.ok) return null;
+    const buffer = await response.arrayBuffer();
+    return new Uint8Array(buffer);
+  } catch (err) {
+    console.warn('Seed snapshot not available:', err);
+    return null;
+  }
+}
+
 export async function init() {
   SQL = await initSqlJs({
     locateFile: f => `https://cdn.jsdelivr.net/npm/sql.js@1.10.3/dist/${f}`
@@ -46,11 +60,19 @@ export async function init() {
   const saved = localStorage.getItem(STORAGE_KEY);
   if (saved) {
     db = new SQL.Database(new Uint8Array(JSON.parse(saved)));
+    return db;
+  }
+
+  // First-time visit: prefer a snapshot from the repo if one exists,
+  // otherwise start with a fresh empty schema.
+  const snapshot = await tryLoadSeedSnapshot();
+  if (snapshot) {
+    db = new SQL.Database(snapshot);
   } else {
     db = new SQL.Database();
     db.exec(SCHEMA);
-    save();
   }
+  save();
   return db;
 }
 
@@ -239,6 +261,37 @@ export function exportSqlite() {
   a.download = `pickleball-tourney-backup-${stamp}.db`;
   a.click();
   URL.revokeObjectURL(url);
+}
+
+export async function loadSnapshotFromRepo() {
+  const ok = await verifyPassword(
+    'Load the latest snapshot from the repo? This replaces your current data:'
+  );
+  if (!ok) return;
+
+  const snapshot = await tryLoadSeedSnapshot();
+  if (!snapshot) {
+    alert('No snapshot found in the repo (seeds/current.db is missing).');
+    return;
+  }
+
+  try {
+    const newDb = new SQL.Database(snapshot);
+    const tables = newDb.exec("SELECT name FROM sqlite_master WHERE type='table'")[0]?.values.flat() || [];
+    const required = ['teams', 'matches', 'meta'];
+    const missing = required.filter(t => !tables.includes(t));
+    if (missing.length) {
+      newDb.close();
+      alert(`Snapshot is malformed: missing tables ${missing.join(', ')}.`);
+      return;
+    }
+    if (db) db.close();
+    db = newDb;
+    save();
+    location.reload();
+  } catch (err) {
+    alert(`Snapshot load failed: ${err.message || err}`);
+  }
 }
 
 export async function importBackup(file) {

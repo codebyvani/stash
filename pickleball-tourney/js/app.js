@@ -1,4 +1,4 @@
-import { init, run, exportSqlite, importBackup, clear, exec, verifyPassword } from './db.js';
+import { init, run, exportSqlite, importBackup, loadSnapshotFromRepo, clear, exec, verifyPassword } from './db.js';
 import {
   getAllTeams,
   addTeam,
@@ -52,6 +52,8 @@ async function main() {
     e.target.value = '';
     if (file) await importBackup(file);
   });
+
+  document.getElementById('snapshot-btn').addEventListener('click', loadSnapshotFromRepo);
 
   refresh();
 }
