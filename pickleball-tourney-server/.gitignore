@@ -1,0 +1,11 @@
+__pycache__/
+*.pyc
+.venv/
+venv/
+.env
+
+# SQLite database + WAL/SHM files
+tournament.db
+tournament.db-journal
+tournament.db-wal
+tournament.db-shm
