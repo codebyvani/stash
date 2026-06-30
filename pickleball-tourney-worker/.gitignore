@@ -1,0 +1,7 @@
+node_modules/
+.wrangler/
+.dev.vars
+*.log
+
+# Wrangler local D1 emulator data
+.wrangler/state/

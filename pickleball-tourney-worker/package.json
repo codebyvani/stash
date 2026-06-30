@@ -1,0 +1,20 @@
+{
+  "name": "pickleball-tourney-worker",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "db:create": "wrangler d1 create tournament",
+    "db:schema": "wrangler d1 execute tournament --remote --file=schema.sql",
+    "db:schema:local": "wrangler d1 execute tournament --local --file=schema.sql",
+    "db:seed": "wrangler d1 execute tournament --remote --file=seed.sql",
+    "db:seed:local": "wrangler d1 execute tournament --local --file=seed.sql",
+    "db:console": "wrangler d1 execute tournament --remote --command='SELECT * FROM teams'",
+    "tail": "wrangler tail"
+  },
+  "devDependencies": {
+    "wrangler": "^3.0.0"
+  }
+}

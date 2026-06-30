@@ -1,0 +1,21 @@
+name = "pickleball-tourney-api"
+main = "src/index.js"
+compatibility_date = "2026-01-01"
+
+# ─── D1 database binding ─────────────────────────────────────────
+# 1. Create the database:    wrangler d1 create tournament
+# 2. Paste the database_id printed by that command below.
+# 3. Apply the schema:        wrangler d1 execute tournament --remote --file=schema.sql
+
+[[d1_databases]]
+binding = "DB"
+database_name = "tournament"
+database_id = "REPLACE_ME_AFTER_CREATE"
+
+# ─── Auth token for write endpoints ──────────────────────────────
+# Dev default. For production, replace via:
+#   wrangler secret put AUTH_TOKEN
+# (Secrets override [vars] when both exist.)
+
+[vars]
+AUTH_TOKEN = "pickles"
