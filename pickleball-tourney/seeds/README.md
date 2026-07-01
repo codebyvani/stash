@@ -5,7 +5,8 @@ SQLite snapshots used as the **shared starting state** for anyone visiting the p
 | File | Purpose |
 |---|---|
 | `current.db` | **Auto-loaded** on first visit (when localStorage is empty). Update this when you want everyone to pick up new state. |
-| `2026-06-30-approved-teams.db` | Historical snapshot — 9 approved teams from Notion as of that date. |
+| `2026-07-01-12-teams.db` | Historical snapshot — 12 approved teams, pool draw not yet done. |
+| `2026-06-30-approved-teams.db` | Historical snapshot — 9 approved teams (initial batch from Notion). |
 
 ## How the file-as-source-of-truth flow works
 
