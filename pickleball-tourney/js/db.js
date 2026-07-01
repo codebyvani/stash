@@ -82,6 +82,7 @@ export function save() {
 }
 
 const RESET_PASSWORD = 'pickles';
+const SNAPSHOT_PASSWORD = 'cucumber';
 
 export function askPassword(message) {
   return new Promise(resolve => {
@@ -132,10 +133,10 @@ export function askPassword(message) {
   });
 }
 
-export async function verifyPassword(message) {
+export async function verifyPassword(message, expected = RESET_PASSWORD) {
   const entered = await askPassword(message);
   if (entered === null) return false;
-  if (entered !== RESET_PASSWORD) {
+  if (entered !== expected) {
     alert('Wrong password.');
     return false;
   }
@@ -265,7 +266,8 @@ export function exportSqlite() {
 
 export async function loadSnapshotFromRepo() {
   const ok = await verifyPassword(
-    'Load the latest snapshot from the repo? This replaces your current data:'
+    'Load the latest snapshot from the repo? This replaces your current data:',
+    SNAPSHOT_PASSWORD
   );
   if (!ok) return;
 
