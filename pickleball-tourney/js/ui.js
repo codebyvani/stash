@@ -204,24 +204,134 @@ export function renderPoolStandings(container, rows) {
   `;
 }
 
-export function renderMatchList(container, matches, onScoreChange) {
-  container.innerHTML = matches.map(m => `
-    <div class="match" data-match-id="${m.id}">
-      <div class="team team-a">
-        <span>${escapeHtml(m.team_a_name)}</span>
-      </div>
-      <div class="score-input">
-        <input type="number" class="score-a" min="0" max="99" value="${m.score_a ?? ''}" placeholder="-" />
-        <span> – </span>
-        <input type="number" class="score-b" min="0" max="99" value="${m.score_b ?? ''}" placeholder="-" />
-      </div>
-      <div class="team team-b">
-        <span>${escapeHtml(m.team_b_name)}</span>
-      </div>
-    </div>
-  `).join('');
+// ─── Scheduled match arrangement ────────────────────────────────
+//
+// Matches are grouped by session and slot for display:
+//   Session 1 (Tue Jul 7, 6:00 PM): Rounds 1 + 2, 6 slots × 20 min
+//   Session 2 (Tue Jul 28, 6:00 PM): Round 3, 3 slots × 20 min
+//
+// Court assignment: Pool A on Court 1, Pool B on Court 2. Pool C's two
+// matches share the same slot on both courts.
 
-  container.querySelectorAll('.match').forEach(el => {
+const SESSION_META = {
+  1: {
+    label: 'Session 1 — Tue Jul 7',
+    time: '6:00 PM start',
+    summary: 'Rounds 1 & 2, 12 matches',
+  },
+  2: {
+    label: 'Session 2 — Tue Jul 28',
+    time: '6:00 PM start',
+    summary: 'Round 3, 6 matches',
+  },
+};
+
+const SLOT_MINUTES = 20;
+
+function getMatchSlotInfo(match) {
+  const seedPair = [match.team_a_seed, match.team_b_seed].sort().join('v');
+
+  let subMatch;
+  if (match.round === 1) subMatch = seedPair === '1v2' ? 1 : 2;   // 1v2 | 3v4
+  else if (match.round === 2) subMatch = seedPair === '1v3' ? 1 : 2; // 1v3 | 2v4
+  else subMatch = seedPair === '1v4' ? 1 : 2;                      // 1v4 | 2v3
+
+  const session = match.round <= 2 ? 1 : 2;
+
+  let slot;
+  if (session === 1) {
+    const base = (match.round - 1) * 3;
+    slot = (match.pool === 'C') ? base + 3 : base + subMatch;
+  } else {
+    slot = (match.pool === 'C') ? 3 : subMatch;
+  }
+
+  let court;
+  if (match.pool === 'C') court = subMatch;         // C splits across courts
+  else if (match.pool === 'A') court = 1;
+  else court = 2;
+
+  return { session, slot, court };
+}
+
+function formatClockTime(hour, minute) {
+  const h24 = hour + Math.floor(minute / 60);
+  const m = minute % 60;
+  const period = h24 >= 12 ? 'PM' : 'AM';
+  const h12 = h24 > 12 ? h24 - 12 : h24 === 0 ? 12 : h24;
+  return `${h12}:${m.toString().padStart(2, '0')} ${period}`;
+}
+
+function getSlotTimeRange(slot) {
+  const startMin = (slot - 1) * SLOT_MINUTES;
+  return `${formatClockTime(18, startMin)} – ${formatClockTime(18, startMin + SLOT_MINUTES)}`;
+}
+
+export function renderMatchList(container, matches, onScoreChange) {
+  const enriched = matches.map(m => ({ ...m, ...getMatchSlotInfo(m) }));
+
+  const bySession = { 1: {}, 2: {} };
+  for (const m of enriched) {
+    if (!bySession[m.session][m.slot]) bySession[m.session][m.slot] = {};
+    bySession[m.session][m.slot][m.court] = m;
+  }
+
+  container.innerHTML = [1, 2].map(sess => {
+    const slots = bySession[sess];
+    if (Object.keys(slots).length === 0) return '';
+
+    const meta = SESSION_META[sess];
+    const allMatchesForSession = Object.values(slots).flatMap(s => Object.values(s));
+    const total = allMatchesForSession.length;
+    const played = allMatchesForSession.filter(m => m.score_a != null && m.score_b != null).length;
+    const slotKeys = Object.keys(slots).map(Number).sort((a, b) => a - b);
+
+    return `
+      <section class="session-section">
+        <header class="session-header">
+          <div>
+            <h4>${meta.label}</h4>
+            <div class="session-subtitle">${meta.time} · ${meta.summary}</div>
+          </div>
+          <span class="session-progress">${played} / ${total} played</span>
+        </header>
+        ${slotKeys.map(slotNum => {
+          const slot = slots[slotNum];
+          const time = getSlotTimeRange(slotNum);
+          return `
+            <div class="slot-block">
+              <div class="slot-header">
+                <span class="slot-num">Slot ${slotNum}</span>
+                <span class="slot-time">${time}</span>
+              </div>
+              ${[1, 2].map(courtNum => {
+                const m = slot[courtNum];
+                if (!m) return '';
+                return `
+                  <div class="match slot-match" data-match-id="${m.id}">
+                    <span class="court-label">Court ${courtNum}</span>
+                    <div class="team team-a">
+                      <span>${escapeHtml(m.team_a_name)}</span>
+                    </div>
+                    <div class="score-input">
+                      <input type="number" class="score-a" min="0" max="99" value="${m.score_a ?? ''}" placeholder="-" />
+                      <span> – </span>
+                      <input type="number" class="score-b" min="0" max="99" value="${m.score_b ?? ''}" placeholder="-" />
+                    </div>
+                    <div class="team team-b">
+                      <span>${escapeHtml(m.team_b_name)}</span>
+                    </div>
+                  </div>
+                `;
+              }).join('')}
+            </div>
+          `;
+        }).join('')}
+      </section>
+    `;
+  }).join('');
+
+  container.querySelectorAll('.slot-match').forEach(el => {
     const id = Number(el.dataset.matchId);
     el.querySelector('.score-a').addEventListener('change', e => {
       onScoreChange(id, 'a', e.target.value);

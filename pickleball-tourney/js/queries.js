@@ -174,7 +174,9 @@ export function playoffSeeds() {
 
 export function poolMatches(pool) {
   return all(
-    `SELECT m.*, ta.name AS team_a_name, tb.name AS team_b_name
+    `SELECT m.*,
+            ta.name AS team_a_name, ta.seed_in_pool AS team_a_seed,
+            tb.name AS team_b_name, tb.seed_in_pool AS team_b_seed
      FROM matches m
      JOIN teams ta ON ta.id = m.team_a_id
      JOIN teams tb ON tb.id = m.team_b_id
