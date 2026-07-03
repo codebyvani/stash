@@ -10,29 +10,86 @@
 </head>
 <body>
   <header>
-    <h1>🥒 SGDC Pickle Ball mini Tourney</h1>
-    <nav>
-      <a href="#info" data-tab="info">Info</a>
-      <a href="#teams" data-tab="teams">Teams</a>
-      <a href="#scoring" data-tab="scoring">Scoring</a>
-      <a href="#bracket" data-tab="bracket">Bracket</a>
-      <a href="#admin" data-tab="admin">Admin</a>
-    </nav>
+    <div class="header-row">
+      <a href="#overview" class="brand-mark" aria-label="Home">
+        <img src="images/logo.png" alt="Pickled" />
+      </a>
+      <nav>
+        <a href="#overview" data-tab="overview">Overview</a>
+        <a href="#schedule" data-tab="schedule">Schedule</a>
+        <a href="#standings" data-tab="standings">Standings</a>
+        <a href="#teams" data-tab="teams">Teams</a>
+        <a href="#rules" data-tab="rules">Rules</a>
+      </nav>
+      <button id="admin-gear" class="admin-gear" title="Admin" aria-label="Admin">⚙️</button>
+    </div>
   </header>
 
+  <!-- Full-width hero — only shown on Overview, escapes main's max-width -->
+  <div id="page-hero" class="page-hero">
+    <img
+      src="images/banner.png"
+      alt="SGDC Pickleball Tournament"
+      onerror="this.parentElement.classList.add('page-hero-fallback')"
+    />
+  </div>
+
   <main>
-    <!-- INFO -->
-    <section id="info" class="tab">
+    <!-- OVERVIEW (landing) -->
+    <section id="overview" class="tab">
+      <div id="overview-content"></div>
+    </section>
+
+    <!-- SCHEDULE (chronological match list) -->
+    <section id="schedule" class="tab" hidden>
+      <h2>Schedule</h2>
+      <div class="scan-panel">
+        <div class="scan-panel-row">
+          <button id="scan-open-btn" class="scan-btn">📷 Scan match QR</button>
+          <span class="scan-panel-hint">Aim at a Pickled app QR to fill in the score</span>
+        </div>
+        <div id="scan-status" class="scan-status" hidden></div>
+        <div id="qr-reader" class="qr-reader" hidden></div>
+      </div>
+      <div id="match-list"></div>
+    </section>
+
+    <!-- STANDINGS (pool tables + bracket) -->
+    <section id="standings" class="tab" hidden>
+      <h2>Group Stage Standings</h2>
+      <div class="pools">
+        <div class="pool">
+          <h3>Pool A</h3>
+          <div id="pool-a-standings"></div>
+        </div>
+        <div class="pool">
+          <h3>Pool B</h3>
+          <div id="pool-b-standings"></div>
+        </div>
+        <div class="pool">
+          <h3>Pool C</h3>
+          <div id="pool-c-standings"></div>
+        </div>
+      </div>
+
+      <h2 class="bracket-heading">Championship Bracket</h2>
+      <div id="bracket-view"></div>
+    </section>
+
+    <!-- TEAMS -->
+    <section id="teams" class="tab" hidden>
+      <h2>Teams</h2>
+      <div id="teams-content"></div>
+    </section>
+
+    <!-- RULES -->
+    <section id="rules" class="tab" hidden>
       <h2>Format</h2>
       <p>Mixed-skill doubles, single open division. 12 teams, 3 pools of 4, round-robin Group Stage then 6-team knockout bracket.</p>
 
       <p class="info-link">
         📋 Full tournament details (rules, schedule, prize pool, skill-tier guide) live in Notion:
         <a href="https://app.notion.com/p/Pickle-Ball-Tourney-389ee7728c578075bd41f33ee59429b9" target="_blank" rel="noopener">Pickle Ball Tourney Notion page →</a>
-      </p>
-
-      <p class="info-sync">
-        🔄 <strong>To get the latest tournament state</strong> (registered teams, pool draw, scores, bracket), open the <a href="#admin">Admin</a> tab and click <strong>🔄 Load latest from repo</strong>. Your local view only updates when you take that action.
       </p>
 
       <h3>Skill tiers</h3>
@@ -53,7 +110,7 @@
         <li>Final: best of 3 games to 11</li>
       </ul>
 
-      <h3>Schedule</h3>
+      <h3>Sessions</h3>
       <ul>
         <li>Session 1 — Tue Jul 7 — Rounds 1 &amp; 2, 12 matches (Magnum, 2 courts) — <strong>6:00 PM start</strong></li>
         <li>Session 2 — Tue Jul 28 — Round 3, 6 matches (Magnum, 2 courts) — <strong>6:00 PM start</strong></li>
@@ -65,113 +122,17 @@
         Round 3 only fills the first hour (6–7 PM), leaving ~2h for the full 6-team playoffs (QF → SF → 3rd-place → Final Bo3 → Awards). Would eliminate the need for a separate booking. Decision TBD.
       </p>
 
-      <details class="schedule-details">
-        <summary><strong>📋 Session 1 matchups — Tue Jul 7 (6:00 PM)</strong></summary>
-
-        <h4>Round 1 (6:00 – 7:00 PM)</h4>
-        <table class="schedule-table">
-          <thead>
-            <tr><th>Slot</th><th>Time</th><th>Court 1</th><th>Court 2</th></tr>
-          </thead>
-          <tbody>
-            <tr><td>1</td><td>6:00 – 6:20</td><td>Renan &amp; Flo vs Dink Responsibly</td><td>ML NA LANG TA vs Taguro Brothers</td></tr>
-            <tr><td>2</td><td>6:20 – 6:40</td><td>Lord of the Dinks vs Dinky Kong</td><td>4K Hi-def vs Ace Hardware</td></tr>
-            <tr><td>3</td><td>6:40 – 7:00</td><td>Dink ang Bato ! vs Dinkadaog</td><td>Team HP vs D²</td></tr>
-          </tbody>
-        </table>
-
-        <h4>Round 2 (7:00 – 8:00 PM)</h4>
-        <table class="schedule-table">
-          <thead>
-            <tr><th>Slot</th><th>Time</th><th>Court 1</th><th>Court 2</th></tr>
-          </thead>
-          <tbody>
-            <tr><td>4</td><td>7:00 – 7:20</td><td>Renan &amp; Flo vs Lord of the Dinks</td><td>ML NA LANG TA vs 4K Hi-def</td></tr>
-            <tr><td>5</td><td>7:20 – 7:40</td><td>Dink Responsibly vs Dinky Kong</td><td>Taguro Brothers vs Ace Hardware</td></tr>
-            <tr><td>6</td><td>7:40 – 8:00</td><td>Dink ang Bato ! vs Team HP</td><td>Dinkadaog vs D²</td></tr>
-          </tbody>
-        </table>
-
-        <p class="schedule-footer">
-          Each match ~20 min. Every team plays 2 matches with at least one 20-min rest slot between them. Session ends ~8:00 PM; remaining ~1h of the 3h block is free play.
-        </p>
-      </details>
-
-      <details class="schedule-details">
-        <summary><strong>📋 Session 2 matchups — Tue Jul 28 (6:00 PM)</strong></summary>
-
-        <h4>Round 3 (6:00 – 7:00 PM)</h4>
-        <table class="schedule-table">
-          <thead>
-            <tr><th>Slot</th><th>Time</th><th>Court 1</th><th>Court 2</th></tr>
-          </thead>
-          <tbody>
-            <tr><td>1</td><td>6:00 – 6:20</td><td>Renan &amp; Flo vs Dinky Kong</td><td>ML NA LANG TA vs Ace Hardware</td></tr>
-            <tr><td>2</td><td>6:20 – 6:40</td><td>Dink Responsibly vs Lord of the Dinks</td><td>Taguro Brothers vs 4K Hi-def</td></tr>
-            <tr><td>3</td><td>6:40 – 7:00</td><td>Dink ang Bato ! vs D²</td><td>Dinkadaog vs Team HP</td></tr>
-          </tbody>
-        </table>
-
-        <p class="schedule-footer">
-          All 18 pool matches complete after this. Compute seeds, publish bracket, then either play the Playoffs same-day (~7:10 PM start, ends ~8:35–9:05 PM) or on a separate weekend.
-        </p>
-      </details>
-
       <h3>How to use this site</h3>
       <ol>
         <li>Open the <a href="#teams">Teams</a> tab and add each approved team as signups roll in.</li>
         <li>Once all 12 teams are registered, click <strong>Draw pools</strong> for a balanced snake-draft.</li>
-        <li>During each session, enter scores in the <a href="#scoring">Scoring</a> tab — standings update live.</li>
-        <li>After all 18 pool matches are scored, the <a href="#bracket">Bracket</a> tab unlocks with seeded playoffs.</li>
-        <li>The <a href="#admin">Admin</a> tab lets you back up or reset the tournament data.</li>
+        <li>During each session, enter scores in the <a href="#schedule">Schedule</a> tab — standings update live in <a href="#standings">Standings</a>.</li>
+        <li>After all 18 pool matches are scored, the bracket in <a href="#standings">Standings</a> populates with seeded playoffs.</li>
+        <li>The ⚙️ icon (top right) has backup and sync tools.</li>
       </ol>
     </section>
 
-    <!-- TEAMS -->
-    <section id="teams" class="tab" hidden>
-      <h2>Teams</h2>
-      <div id="teams-content"></div>
-    </section>
-
-    <!-- SCORING -->
-    <section id="scoring" class="tab" hidden>
-      <h2>Group Stage Scoring</h2>
-
-      <div class="scan-panel">
-        <div class="scan-panel-row">
-          <button id="scan-open-btn" class="scan-btn">📷 Scan match QR</button>
-          <span class="scan-panel-hint">Aim at a Pickled app QR to fill in the score</span>
-        </div>
-        <div id="scan-status" class="scan-status" hidden></div>
-        <div id="qr-reader" class="qr-reader" hidden></div>
-      </div>
-
-      <div class="pools">
-        <div class="pool">
-          <h3>Pool A</h3>
-          <div id="pool-a-standings"></div>
-        </div>
-        <div class="pool">
-          <h3>Pool B</h3>
-          <div id="pool-b-standings"></div>
-        </div>
-        <div class="pool">
-          <h3>Pool C</h3>
-          <div id="pool-c-standings"></div>
-        </div>
-      </div>
-
-      <h3>Matches</h3>
-      <div id="match-list"></div>
-    </section>
-
-    <!-- BRACKET -->
-    <section id="bracket" class="tab" hidden>
-      <h2>Championship Bracket</h2>
-      <div id="bracket-view"></div>
-    </section>
-
-    <!-- ADMIN -->
+    <!-- ADMIN (hidden by default; toggled by gear icon) -->
     <section id="admin" class="tab" hidden>
       <h2>Admin</h2>
       <p>Backup and reset tools.</p>
@@ -187,6 +148,11 @@
       <pre id="db-status"></pre>
     </section>
   </main>
+
+  <button id="sync-pill" class="sync-pill" hidden aria-label="Load latest from repo">
+    <span class="sync-pill-icon">🔄</span>
+    <span class="sync-pill-label">Load latest</span>
+  </button>
 
   <script type="module" src="js/app.js"></script>
 </body>

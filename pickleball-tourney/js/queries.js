@@ -285,6 +285,24 @@ export function getBracketState() {
   };
 }
 
+export function matchesForTeam(teamId) {
+  return all(
+    `SELECT m.*,
+            ta.name AS team_a_name, ta.seed_in_pool AS team_a_seed,
+            tb.name AS team_b_name, tb.seed_in_pool AS team_b_seed
+       FROM matches m
+       JOIN teams ta ON ta.id = m.team_a_id
+       JOIN teams tb ON tb.id = m.team_b_id
+      WHERE m.team_a_id = ? OR m.team_b_id = ?
+      ORDER BY m.stage, m.round, m.id`,
+    [teamId, teamId]
+  );
+}
+
+export function getTeamById(id) {
+  return all('SELECT * FROM teams WHERE id = ?', [id])[0] ?? null;
+}
+
 export function getMatchIdByKey(key) {
   const map = {
     qf1: ['qf', 1],

@@ -12,6 +12,8 @@ import {
   poolStageComplete,
   getBracketState,
   getMatchIdByKey,
+  matchesForTeam,
+  getTeamById,
 } from './queries.js';
 import {
   renderTeamsTab,
@@ -20,6 +22,12 @@ import {
   renderMatchList,
   renderScoringEmpty,
   renderVisualBracket,
+  renderOverview,
+  renderScheduleFilters,
+  filterMatches,
+  activateMatchIdCopy,
+  openTeamDetailModal,
+  openPlayerDetailModal,
   setActiveTab,
 } from './ui.js';
 import { initAutoImport, scanPickledMatch, stopScan } from './qr-receiver.js';
@@ -27,16 +35,39 @@ import { initAutoImport, scanPickledMatch, stopScan } from './qr-receiver.js';
 // In-memory preview state for the pool draw before it's locked
 let pendingDraw = null;
 
+const TAB_ALIASES = {
+  info: 'rules',
+  scoring: 'schedule',
+  bracket: 'standings',
+};
+
+function resolveTab(raw) {
+  const t = (raw || '#overview').replace(/^#/, '');
+  return TAB_ALIASES[t] || t || 'overview';
+}
+
 async function main() {
   await init();
 
-  const tab = (window.location.hash || '#info').slice(1);
+  const tab = resolveTab(window.location.hash);
   setActiveTab(tab);
 
   window.addEventListener('hashchange', () => {
-    const t = (window.location.hash || '#info').slice(1);
+    const t = resolveTab(window.location.hash);
     setActiveTab(t);
     refresh();
+  });
+
+  // Admin gear toggles visibility of the admin section as a sixth pseudo-tab
+  document.getElementById('admin-gear')?.addEventListener('click', () => {
+    window.location.hash = '#admin';
+    setActiveTab('admin');
+    refresh();
+  });
+
+  // Sticky Load-latest pill
+  document.getElementById('sync-pill')?.addEventListener('click', () => {
+    loadSnapshotFromRepo();
   });
 
   document.querySelectorAll('nav a').forEach(a => {
@@ -60,6 +91,7 @@ async function main() {
   initAutoImport();
   window.addEventListener('pickled:score-received', onScoreReceived);
   setupScanButton();
+  setupHeroParallax();
 
   refresh();
 }
@@ -246,6 +278,35 @@ function showScanStatus(message, isError = false) {
   showScanStatus._t = setTimeout(() => { el.hidden = true; }, 5000);
 }
 
+// Parallax the hero banner image: as the page scrolls, drift the image up
+// at ~40% of scroll speed so the Overview content below feels like it's
+// sliding over the banner. Only applies on the Overview tab (where the hero
+// is displayed).
+function setupHeroParallax() {
+  const hero = document.getElementById('page-hero');
+  if (!hero) return;
+  const img = hero.querySelector('.page-hero-fg') || hero.querySelector('img');
+  if (!img) return;
+
+  let ticking = false;
+  const onScroll = () => {
+    if (!document.body.classList.contains('tab-overview')) return;
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(() => {
+      const y = window.scrollY;
+      const heroHeight = hero.offsetHeight;
+      // Fade + drift within the hero's own viewport; stop past the banner.
+      if (y < heroHeight * 1.2) {
+        img.style.transform = `translate3d(0, ${y * 0.4}px, 0)`;
+        hero.style.setProperty('--hero-fade', String(Math.max(0, 1 - y / heroHeight * 1.2)));
+      }
+      ticking = false;
+    });
+  };
+  window.addEventListener('scroll', onScroll, { passive: true });
+}
+
 function setupScanButton() {
   const btn = document.getElementById('scan-open-btn');
   const reader = document.getElementById('qr-reader');
@@ -276,10 +337,48 @@ function setupScanButton() {
 }
 
 function refresh() {
+  refreshOverview();
   refreshTeams();
   refreshScoring();
   refreshBracket();
   refreshAdmin();
+  refreshSyncPill();
+}
+
+function refreshOverview() {
+  const container = document.getElementById('overview-content');
+  if (!container) return;
+  const teams = getAllTeams();
+  const locked = isPoolDrawLocked();
+  const allMatches = locked
+    ? ['A', 'B', 'C'].flatMap(p => poolMatches(p))
+    : [];
+  const bracket = locked ? getBracketState() : { complete: false, matches: {} };
+  renderOverview(container, {
+    poolsLocked: locked,
+    teamCount: teams.length,
+    matches: allMatches,
+    lastUpdated: getSnapshotUpdatedLabel(),
+    bracket,
+    poolStageComplete: poolStageComplete(),
+  });
+  activateMatchIdCopy(container);
+}
+
+function getSnapshotUpdatedLabel() {
+  const row = all("SELECT value FROM meta WHERE key = 'snapshot_updated'")[0];
+  if (row?.value) return row.value;
+  const created = all("SELECT value FROM meta WHERE key = 'created_at'")[0];
+  return created?.value ?? null;
+}
+
+function refreshSyncPill() {
+  // Show the sync pill on Overview, Schedule, Standings, Teams; hide elsewhere.
+  const pill = document.getElementById('sync-pill');
+  if (!pill) return;
+  const currentTab = resolveTab(window.location.hash);
+  const hide = currentTab === 'admin' || currentTab === 'rules';
+  pill.hidden = hide;
 }
 
 function refreshTeams() {
@@ -326,7 +425,34 @@ function refreshTeams() {
       refresh();
     },
   });
+
+  // Click a player row (photo or name) → open a player detail modal.
+  container.querySelectorAll('.team-showcase-player').forEach((row) => {
+    row.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const name = row.dataset.playerName;
+      const skill = Number(row.dataset.playerSkill) || null;
+      const teamName = row.dataset.teamName;
+      if (name) openPlayerDetailModal({ name, skill, teamName });
+    });
+  });
+
+  // Click elsewhere on a team card → open the team detail modal.
+  container.querySelectorAll('.team-showcase-card, .team-card').forEach((card) => {
+    card.addEventListener('click', (e) => {
+      if (e.target.closest('.delete-team-btn')) return;
+      if (e.target.closest('.team-showcase-player')) return; // handled above
+      if (e.target.closest('input, select, button, .add-team-form, .pool-draw-section')) return;
+      const teamId = Number(card.dataset.teamId);
+      if (teamId) {
+        const team = getTeamById(teamId);
+        if (team) openTeamDetailModal(team, matchesForTeam(teamId));
+      }
+    });
+  });
 }
+
+let scheduleFilter = 'all';
 
 function refreshScoring() {
   if (!isPoolDrawLocked()) {
@@ -342,14 +468,45 @@ function refreshScoring() {
     return;
   }
 
+  // Pool standings (Standings tab)
   for (const pool of ['A', 'B', 'C']) {
     const standings = poolStandings(pool);
     const el = document.getElementById(`pool-${pool.toLowerCase()}-standings`);
     if (el) renderPoolStandings(el, standings);
   }
 
+  // Schedule tab: filter chips + match list
   const allMatches = ['A', 'B', 'C'].flatMap(p => poolMatches(p));
-  renderMatchList(document.getElementById('match-list'), allMatches, onPoolScoreChange);
+  const counts = {
+    all: allMatches.length,
+    'session-1': allMatches.filter(m => m.stage === 'pool' && m.round <= 2).length,
+    'session-2': allMatches.filter(m => m.stage === 'pool' && m.round === 3).length,
+    unplayed: allMatches.filter(m => m.score_a == null || m.score_b == null).length,
+    playoffs: allMatches.filter(m => m.stage !== 'pool').length,
+  };
+  ensureFilterMount();
+  const filterMount = document.getElementById('schedule-filters');
+  if (filterMount) {
+    renderScheduleFilters(filterMount, scheduleFilter, counts, (next) => {
+      scheduleFilter = next;
+      refreshScoring();
+    });
+  }
+
+  const visibleMatches = filterMatches(allMatches, scheduleFilter);
+  const matchListEl = document.getElementById('match-list');
+  renderMatchList(matchListEl, visibleMatches, onPoolScoreChange);
+  activateMatchIdCopy(matchListEl);
+}
+
+// The filter chips mount lives right above the match list — inject it once.
+function ensureFilterMount() {
+  if (document.getElementById('schedule-filters')) return;
+  const matchListEl = document.getElementById('match-list');
+  if (!matchListEl) return;
+  const mount = document.createElement('div');
+  mount.id = 'schedule-filters';
+  matchListEl.parentElement.insertBefore(mount, matchListEl);
 }
 
 function refreshBracket() {
