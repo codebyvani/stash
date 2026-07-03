@@ -6,6 +6,7 @@
   <title>🥒 SGDC Pickle Ball mini Tourney</title>
   <link rel="stylesheet" href="styles.css" />
   <script src="https://cdn.jsdelivr.net/npm/sql.js@1.10.3/dist/sql-wasm.js"></script>
+  <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 </head>
 <body>
   <header>
@@ -135,6 +136,15 @@
     <!-- SCORING -->
     <section id="scoring" class="tab" hidden>
       <h2>Group Stage Scoring</h2>
+
+      <div class="scan-panel">
+        <div class="scan-panel-row">
+          <button id="scan-open-btn" class="scan-btn">📷 Scan match QR</button>
+          <span class="scan-panel-hint">Aim at a Pickled app QR to fill in the score</span>
+        </div>
+        <div id="scan-status" class="scan-status" hidden></div>
+        <div id="qr-reader" class="qr-reader" hidden></div>
+      </div>
 
       <div class="pools">
         <div class="pool">

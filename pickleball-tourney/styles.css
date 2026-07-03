@@ -1107,3 +1107,77 @@ pre {
 .modal-actions button.primary:hover {
   background: #1f6b2d;
 }
+
+/* ────────────────────────────────────────────────────────── */
+/* Pickled QR scan panel                                       */
+/* ────────────────────────────────────────────────────────── */
+
+.scan-panel {
+  background: #f7f9f2;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  margin: 0 0 1.25rem;
+}
+
+.scan-panel-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.scan-btn {
+  background: var(--accent);
+  color: white;
+  border: 1px solid var(--accent);
+  border-radius: 6px;
+  padding: 0.5rem 1rem;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.scan-btn:hover {
+  background: #1f6b2d;
+}
+
+.scan-panel-hint {
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.scan-status {
+  margin-top: 0.75rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
+  background: #e8f0d9;
+  color: #1b2e11;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.scan-status-error {
+  background: #fbe0dc;
+  color: #7a1e10;
+}
+
+.qr-reader {
+  margin-top: 0.75rem;
+  max-width: 360px;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+
+.match-id-badge {
+  display: inline-block;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.06);
+  color: var(--muted);
+  font-family: ui-monospace, "SF Mono", monospace;
+  font-size: 0.75rem;
+  font-weight: 600;
+  margin-right: 0.35rem;
+}

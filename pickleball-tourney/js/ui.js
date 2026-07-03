@@ -310,6 +310,7 @@ export function renderMatchList(container, matches, onScoreChange) {
                 return `
                   <div class="match slot-match" data-match-id="${m.id}">
                     <span class="court-label">Court ${courtNum}</span>
+                    <span class="match-id-badge" title="Type this ID as 'Tourney match ID' in the Pickled app">#${m.id}</span>
                     <div class="team team-a">
                       <span>${escapeHtml(m.team_a_name)}</span>
                     </div>
