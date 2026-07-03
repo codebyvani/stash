@@ -120,22 +120,120 @@ function resolveTourneyId(rawId) {
   return null;
 }
 
-function onScoreReceived(e) {
+async function onScoreReceived(e) {
   const { tourneyMatchId, scoreA, scoreB } = e.detail;
   const matchId = resolveTourneyId(tourneyMatchId);
-  const status = document.getElementById('scan-status');
   if (matchId == null) {
     showScanStatus(`❌ Couldn't find tourney match "${tourneyMatchId}". No changes applied.`, true);
     return;
   }
+
+  const rows = all(
+    `SELECT m.id, m.stage, m.pool, m.round, m.score_a, m.score_b,
+            ta.name AS team_a_name, tb.name AS team_b_name
+       FROM matches m
+       JOIN teams ta ON ta.id = m.team_a_id
+       JOIN teams tb ON tb.id = m.team_b_id
+      WHERE m.id = ?`,
+    [matchId]
+  );
+  const info = rows[0];
+  if (!info) {
+    showScanStatus(`❌ Match #${matchId} not found in DB.`, true);
+    return;
+  }
+
+  const confirmed = await askScoreConfirm({
+    matchId,
+    tourneyMatchId,
+    teamAName: info.team_a_name,
+    teamBName: info.team_b_name,
+    stage: info.stage,
+    pool: info.pool,
+    round: info.round,
+    incomingScoreA: scoreA,
+    incomingScoreB: scoreB,
+    currentScoreA: info.score_a,
+    currentScoreB: info.score_b,
+  });
+  if (!confirmed) {
+    showScanStatus('Import cancelled.');
+    return;
+  }
+
   run(
     `UPDATE matches
        SET score_a = ?, score_b = ?, played_at = COALESCE(played_at, datetime('now'))
        WHERE id = ?`,
     [scoreA, scoreB, matchId]
   );
-  showScanStatus(`✅ Match "${tourneyMatchId}" updated: ${scoreA} – ${scoreB}`);
+  showScanStatus(`✅ Match #${matchId} updated: ${scoreA} – ${scoreB}`);
   refresh();
+}
+
+function askScoreConfirm(details) {
+  return new Promise((resolve) => {
+    const overlay = document.createElement('div');
+    overlay.className = 'modal-overlay';
+    const stageLabel =
+      details.stage === 'pool'
+        ? `Pool ${details.pool} · Round ${details.round}`
+        : details.stage.toUpperCase();
+    const hasExisting = details.currentScoreA != null || details.currentScoreB != null;
+    overlay.innerHTML = `
+      <div class="modal" role="dialog" aria-modal="true">
+        <p class="modal-message"><strong>Import scanned score?</strong></p>
+        <div class="scan-confirm">
+          <div class="scan-confirm-meta">Match #${details.matchId} · ${escapeHtml(stageLabel)}</div>
+          <div class="scan-confirm-teams">
+            <div class="scan-confirm-team">
+              <span class="scan-confirm-name">${escapeHtml(details.teamAName)}</span>
+              <span class="scan-confirm-score">${details.incomingScoreA}</span>
+            </div>
+            <div class="scan-confirm-vs">vs</div>
+            <div class="scan-confirm-team">
+              <span class="scan-confirm-name">${escapeHtml(details.teamBName)}</span>
+              <span class="scan-confirm-score">${details.incomingScoreB}</span>
+            </div>
+          </div>
+          ${hasExisting ? `
+            <div class="scan-confirm-warn">
+              ⚠️ This match already has a score:
+              <strong>${details.currentScoreA ?? '-'} – ${details.currentScoreB ?? '-'}</strong>.
+              Confirming will overwrite it.
+            </div>` : ''
+          }
+        </div>
+        <div class="modal-actions">
+          <button type="button" id="scan-confirm-cancel">Cancel</button>
+          <button type="button" id="scan-confirm-ok" class="primary">Confirm</button>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(overlay);
+
+    const finish = (result) => {
+      overlay.remove();
+      document.removeEventListener('keydown', keyHandler);
+      resolve(result);
+    };
+    overlay.querySelector('#scan-confirm-cancel').addEventListener('click', () => finish(false));
+    overlay.querySelector('#scan-confirm-ok').addEventListener('click', () => finish(true));
+    const keyHandler = (ev) => {
+      if (ev.key === 'Escape') finish(false);
+      if (ev.key === 'Enter') finish(true);
+    };
+    document.addEventListener('keydown', keyHandler);
+    overlay.addEventListener('click', (ev) => { if (ev.target === overlay) finish(false); });
+
+    setTimeout(() => overlay.querySelector('#scan-confirm-ok').focus(), 30);
+  });
+}
+
+function escapeHtml(s) {
+  return String(s ?? '').replace(/[&<>"']/g, (c) => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+  }[c]));
 }
 
 function showScanStatus(message, isError = false) {
