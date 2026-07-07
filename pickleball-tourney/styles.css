@@ -2736,3 +2736,362 @@ body.tab-overview .page-hero {
 .slot-match.locked {
   background: #FAFCF5;
 }
+
+/* ────────────────────────────────────────────────────────── */
+/* Prize pool (Rules tab)                                      */
+/* ────────────────────────────────────────────────────────── */
+
+.prize-pool-callout {
+  background: linear-gradient(135deg, var(--gold-bg) 0%, var(--card) 70%);
+  border: 1px solid var(--gold);
+  border-radius: 16px;
+  padding: 1.25rem 1.5rem;
+  margin: 0.75rem 0 1rem;
+}
+
+.prize-pool-total {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  margin-bottom: 0.85rem;
+}
+
+.prize-pool-label {
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--gold-dark);
+}
+
+.prize-pool-amount {
+  font-size: 2.5rem;
+  font-weight: 900;
+  color: var(--gold-dark);
+  letter-spacing: -1px;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.prize-pool-note {
+  font-size: 0.85rem;
+  color: var(--muted);
+  font-style: italic;
+}
+
+.prize-pool-sponsors {
+  margin-top: 1rem;
+  font-size: 0.9rem;
+}
+
+.prize-pool-sponsors ul {
+  list-style: none;
+  padding: 0;
+  margin: 0.35rem 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.prize-pool-sponsors li {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.15rem 0;
+  border-bottom: 1px dashed rgba(0, 0, 0, 0.06);
+}
+
+.prize-pool-sponsors li:last-child { border-bottom: none; }
+
+.prize-split-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0.5rem 0;
+}
+
+.prize-split-table th {
+  text-align: left;
+  padding: 0.6rem 0.75rem;
+  font-size: 0.75rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--muted);
+  border-bottom: 1px solid var(--border);
+}
+
+.prize-split-table td {
+  padding: 0.6rem 0.75rem;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.95rem;
+}
+
+.prize-split-table tr.prize-champion {
+  background: linear-gradient(90deg, var(--gold-bg), transparent 80%);
+}
+
+.prize-split-table tr.prize-champion td {
+  font-weight: 800;
+  color: var(--gold-dark);
+}
+
+.prize-pool-footer {
+  font-size: 0.85rem;
+  margin-top: 0.5rem;
+}
+
+.overview-prize-hint {
+  display: inline-block;
+  margin-top: 1rem;
+  padding: 0.5rem 1rem;
+  border-radius: 999px;
+  background: var(--gold-bg);
+  color: var(--gold-dark);
+  border: 1px solid var(--gold);
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.overview-prize-hint:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(245, 178, 66, 0.35);
+}
+
+/* ────────────────────────────────────────────────────────── */
+/* Rules tab — polished sections                               */
+/* ────────────────────────────────────────────────────────── */
+
+.format-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 0.75rem;
+  margin: 0.5rem 0 1rem;
+}
+
+.format-chip {
+  background: linear-gradient(135deg, var(--accent-bg), var(--card));
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 1rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.format-chip-num {
+  font-size: 2rem;
+  font-weight: 900;
+  color: var(--accent-dk);
+  letter-spacing: -1px;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.format-chip-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.format-lede {
+  font-size: 1rem;
+  color: var(--fg);
+  margin: 0.5rem 0 1rem;
+}
+
+/* ── Skill tiers ── */
+
+.tier-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 0.75rem;
+  margin: 0.5rem 0 1rem;
+}
+
+.tier-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 1rem 1.15rem;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  grid-template-rows: auto auto;
+  gap: 0.15rem 0.75rem;
+  align-items: center;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.tier-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(27, 46, 17, 0.08);
+}
+
+.tier-card.tier-beginner { border-left: 4px solid var(--tier-beginner); }
+.tier-card.tier-intermediate { border-left: 4px solid var(--tier-intermediate); }
+.tier-card.tier-advanced { border-left: 4px solid var(--tier-advanced); }
+
+.tier-dot {
+  grid-row: 1 / span 2;
+  font-size: 1.75rem;
+}
+
+.tier-name {
+  font-weight: 800;
+  color: var(--fg);
+  font-size: 1rem;
+}
+
+.tier-pts {
+  grid-row: 1;
+  grid-column: 3;
+  font-weight: 700;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.tier-desc {
+  grid-column: 2 / span 2;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+/* ── Team balance rule callout ── */
+
+.rule-callout {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  background: linear-gradient(135deg, #f0f7e1, var(--card) 60%);
+  border: 1px solid var(--accent);
+  border-radius: 14px;
+  padding: 1rem 1.25rem;
+  margin: 0.5rem 0 1.5rem;
+}
+
+.rule-callout-icon {
+  font-size: 1.75rem;
+  flex-shrink: 0;
+}
+
+/* ── Scoring cards ── */
+
+.scoring-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 0.75rem;
+  margin: 0.5rem 0 1rem;
+}
+
+.scoring-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 0.85rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.scoring-stage {
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--accent-dk);
+}
+
+.scoring-format {
+  color: var(--fg);
+  font-size: 0.95rem;
+}
+
+.scoring-format strong {
+  color: var(--fg);
+  font-size: 1.05rem;
+}
+
+.scoring-note {
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+.scoring-card.scoring-final {
+  background: linear-gradient(135deg, var(--gold-bg), var(--card));
+  border-color: var(--gold);
+}
+
+.scoring-card.scoring-final .scoring-stage {
+  color: var(--gold-dark);
+}
+
+/* ── Session timeline ── */
+
+.session-timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  position: relative;
+  margin: 0.5rem 0 1rem;
+}
+
+.session-item {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.85rem 1.15rem;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--card);
+}
+
+.session-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--border);
+  box-shadow: 0 0 0 4px transparent;
+}
+
+.session-item.session-done .session-dot {
+  background: var(--accent);
+  box-shadow: 0 0 0 4px var(--accent-bg);
+}
+
+.session-item.session-pending .session-dot {
+  background: var(--gold);
+  box-shadow: 0 0 0 4px var(--gold-bg);
+}
+
+.session-title {
+  font-weight: 700;
+  color: var(--fg);
+}
+
+.session-detail {
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.session-status {
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 0.35rem 0.75rem;
+  border-radius: 999px;
+  background: var(--bg);
+  color: var(--muted);
+}
+
+.session-item.session-done .session-status {
+  background: var(--accent-bg);
+  color: var(--accent-dk);
+}
+
+.session-item.session-pending .session-status {
+  background: var(--gold-bg);
+  color: var(--gold-dark);
+}

@@ -87,45 +87,120 @@
     <!-- RULES -->
     <section id="rules" class="tab" hidden>
       <h2>Format</h2>
-      <p>Mixed-skill doubles, single open division. 12 teams, 3 pools of 4, round-robin Group Stage then 6-team knockout bracket.</p>
 
-      <p class="info-link">
-        📋 Full tournament details (rules, schedule, prize pool, skill-tier guide) live in Notion:
-        <a href="https://app.notion.com/p/Pickle-Ball-Tourney-389ee7728c578075bd41f33ee59429b9" target="_blank" rel="noopener">Pickle Ball Tourney Notion page →</a>
-      </p>
+      <div class="format-grid">
+        <div class="format-chip"><span class="format-chip-num">12</span><span class="format-chip-label">Teams</span></div>
+        <div class="format-chip"><span class="format-chip-num">3</span><span class="format-chip-label">Pools of 4</span></div>
+        <div class="format-chip"><span class="format-chip-num">18</span><span class="format-chip-label">Pool matches</span></div>
+        <div class="format-chip"><span class="format-chip-num">6</span><span class="format-chip-label">Playoff teams</span></div>
+      </div>
+      <p class="format-lede">Mixed-skill doubles, single open division. Round-robin Group Stage, then a 6-team knockout bracket.</p>
 
       <h3>Skill tiers</h3>
-      <ul>
-        <li>🟢 Beginner = 1 point</li>
-        <li>🟡 Intermediate = 2 points</li>
-        <li>🔴 Advanced = 3 points</li>
-      </ul>
-
-      <p><strong>Team balance rule:</strong> combined points must equal 3 or 4.</p>
+      <div class="tier-grid">
+        <div class="tier-card tier-beginner">
+          <div class="tier-dot">🟢</div>
+          <div class="tier-name">Beginner</div>
+          <div class="tier-pts">1 pt</div>
+          <div class="tier-desc">Just learning the game</div>
+        </div>
+        <div class="tier-card tier-intermediate">
+          <div class="tier-dot">🟡</div>
+          <div class="tier-name">Intermediate</div>
+          <div class="tier-pts">2 pts</div>
+          <div class="tier-desc">Comfortable rallying</div>
+        </div>
+        <div class="tier-card tier-advanced">
+          <div class="tier-dot">🔴</div>
+          <div class="tier-name">Advanced</div>
+          <div class="tier-pts">3 pts</div>
+          <div class="tier-desc">Plays regularly with strategy</div>
+        </div>
+      </div>
+      <div class="rule-callout">
+        <span class="rule-callout-icon">🤝</span>
+        <div>
+          <strong>Team balance rule:</strong> combined points must equal <strong>3 or 4</strong>. Keeps teams competitive across the tourney.
+        </div>
+      </div>
 
       <h3>Scoring</h3>
-      <ul>
-        <li>Group Stage: single game to 11, side-out scoring, win by 2</li>
-        <li>Knockout QF: single game to 11</li>
-        <li>Knockout SF: single game to 15</li>
-        <li>3rd-place playoff: single game to 11</li>
-        <li>Final: best of 3 games to 11</li>
-      </ul>
+      <div class="scoring-grid">
+        <div class="scoring-card">
+          <div class="scoring-stage">Group Stage</div>
+          <div class="scoring-format">Single game to <strong>11</strong></div>
+          <div class="scoring-note">Side-out scoring · win by 2</div>
+        </div>
+        <div class="scoring-card">
+          <div class="scoring-stage">Quarterfinal</div>
+          <div class="scoring-format">Single game to <strong>11</strong></div>
+        </div>
+        <div class="scoring-card">
+          <div class="scoring-stage">Semifinal</div>
+          <div class="scoring-format">Single game to <strong>15</strong></div>
+        </div>
+        <div class="scoring-card">
+          <div class="scoring-stage">3rd-place playoff</div>
+          <div class="scoring-format">Single game to <strong>11</strong></div>
+        </div>
+        <div class="scoring-card scoring-final">
+          <div class="scoring-stage">🏆 Final</div>
+          <div class="scoring-format">Best of 3, games to <strong>11</strong></div>
+        </div>
+      </div>
 
       <h3>Sessions</h3>
-      <ul>
-        <li>✅ Group Stage — Tue Jul 7 — All 18 matches played in one session (Magnum, 2 courts)</li>
-        <li>Playoffs — TBD (target 1st week of August)</li>
-      </ul>
+      <div class="session-timeline">
+        <div class="session-item session-done">
+          <div class="session-dot"></div>
+          <div class="session-body">
+            <div class="session-title">Group Stage · <span class="muted">Tue Jul 7</span></div>
+            <div class="session-detail">All 18 matches played in one session at Magnum (2 courts)</div>
+          </div>
+          <div class="session-status">✅ Complete</div>
+        </div>
+        <div class="session-item session-pending">
+          <div class="session-dot"></div>
+          <div class="session-body">
+            <div class="session-title">Playoffs · <span class="muted">TBD</span></div>
+            <div class="session-detail">Target: 1st week of August · QF → SF → 3rd → Bo3 Final</div>
+          </div>
+          <div class="session-status">Coming up</div>
+        </div>
+      </div>
 
-      <h3>How to use this site</h3>
-      <ol>
-        <li>Open the <a href="#teams">Teams</a> tab and add each approved team as signups roll in.</li>
-        <li>Once all 12 teams are registered, click <strong>Draw pools</strong> for a balanced snake-draft.</li>
-        <li>During each session, enter scores in the <a href="#schedule">Schedule</a> tab — standings update live in <a href="#standings">Standings</a>.</li>
-        <li>After all 18 pool matches are scored, the bracket in <a href="#standings">Standings</a> populates with seeded playoffs.</li>
-        <li>The ⚙️ icon (top right) has backup and sync tools.</li>
-      </ol>
+      <h3>🏅 Prize Pool</h3>
+      <div class="prize-pool-callout">
+        <div class="prize-pool-total">
+          <span class="prize-pool-label">Current pool</span>
+          <span class="prize-pool-amount">₱7,000</span>
+          <span class="prize-pool-note">may grow as more solicitations come in before championship day</span>
+        </div>
+        <div class="prize-pool-note">No entry fee. Funded entirely by solicitations.</div>
+        <div class="prize-pool-sponsors">
+          <strong>Sponsors:</strong>
+          <ul>
+            <li>Sir Jay <span class="muted">₱3,000</span></li>
+            <li>Vani <span class="muted">₱2,000</span></li>
+            <li>Maeta <span class="muted">₱2,000</span></li>
+          </ul>
+        </div>
+      </div>
+
+      <table class="prize-split-table">
+        <thead>
+          <tr><th>Place</th><th>Share</th></tr>
+        </thead>
+        <tbody>
+          <tr class="prize-champion"><td>🥇 Champion</td><td>40%</td></tr>
+          <tr><td>🥈 Runner-up</td><td>24%</td></tr>
+          <tr><td>🥉 3rd</td><td>16%</td></tr>
+          <tr><td>4th</td><td>12%</td></tr>
+          <tr><td>5th &amp; 6th</td><td>8% (4% each)</td></tr>
+        </tbody>
+      </table>
+      <p class="muted prize-pool-footer">Final per-team amounts will be announced on championship day based on the total pool.</p>
+
     </section>
 
     <!-- ADMIN (hidden by default; toggled by gear icon) -->
