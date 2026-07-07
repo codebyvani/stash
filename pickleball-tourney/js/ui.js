@@ -1203,6 +1203,39 @@ export function openTeamDetailModal(team, teamMatches) {
   document.addEventListener('keydown', keyHandler);
 }
 
+// ───── Phase flow (Rules tab: Group Stage → Playoffs → Champion) ─────
+
+export function renderPhaseFlow(container, { poolDone, playoffsDone, champion }) {
+  if (!container) return;
+  let currentIdx;
+  if (champion) currentIdx = 2;
+  else if (poolDone) currentIdx = 1;
+  else currentIdx = 0;
+
+  const phases = [
+    { label: 'Group Stage', sub: 'round-robin pools' },
+    { label: 'Playoffs',    sub: '6-team knockout bracket' },
+    { label: 'Champion',    sub: champion ? escapeHtml(champion) : 'best-of-3 final' },
+  ];
+
+  container.innerHTML = phases.map((p, i) => {
+    const state = i < currentIdx ? 'done' : i === currentIdx ? 'current' : 'future';
+    const sep = i < phases.length - 1 ? '<div class="phase-sep"></div>' : '';
+    return `
+      <div class="phase-step phase-${state}">
+        <div class="phase-marker">
+          ${state === 'done' ? '✓' : state === 'current' ? (i === 2 ? '🏆' : '▶') : (i + 1)}
+        </div>
+        <div class="phase-text">
+          <div class="phase-label">${p.label}</div>
+          <div class="phase-sub">${p.sub}</div>
+        </div>
+      </div>
+      ${sep}
+    `;
+  }).join('');
+}
+
 // ───── Player detail modal ─────
 
 export function openPlayerDetailModal({ name, skill, teamName }) {

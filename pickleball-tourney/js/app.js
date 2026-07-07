@@ -29,6 +29,7 @@ import {
   activateMatchIdCopy,
   openTeamDetailModal,
   openPlayerDetailModal,
+  renderPhaseFlow,
   setActiveTab,
 } from './ui.js';
 import { initAutoImport, scanPickledMatch, stopScan } from './qr-receiver.js';
@@ -343,7 +344,25 @@ function refresh() {
   refreshScoring();
   refreshBracket();
   refreshAdmin();
+  refreshPhaseFlow();
   refreshSyncPill();
+}
+
+function refreshPhaseFlow() {
+  const el = document.getElementById('phase-flow');
+  if (!el) return;
+  const poolDone = poolStageComplete();
+  const bracket = poolDone ? getBracketState() : null;
+  const finalMatch = bracket?.matches?.final;
+  const finalPlayed = finalMatch && finalMatch.score_a != null && finalMatch.score_b != null;
+  const championName = finalPlayed
+    ? (finalMatch.score_a > finalMatch.score_b ? finalMatch.team_a_name : finalMatch.team_b_name)
+    : null;
+  renderPhaseFlow(el, {
+    poolDone,
+    playoffsDone: !!finalPlayed,
+    champion: championName,
+  });
 }
 
 function refreshOverview() {

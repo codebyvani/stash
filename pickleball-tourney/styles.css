@@ -3095,3 +3095,111 @@ body.tab-overview .page-hero {
   background: var(--gold-bg);
   color: var(--gold-dark);
 }
+
+/* ────────────────────────────────────────────────────────── */
+/* Phase flow (Rules: Group Stage → Playoffs → Champion)      */
+/* ────────────────────────────────────────────────────────── */
+
+.phase-flow {
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+  margin: 0.75rem 0 1.5rem;
+  flex-wrap: wrap;
+}
+
+.phase-step {
+  flex: 1 1 180px;
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 0.85rem 1rem;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.phase-marker {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 900;
+  font-size: 1rem;
+  flex-shrink: 0;
+  background: var(--bg);
+  color: var(--muted);
+  border: 2px solid var(--border);
+}
+
+.phase-label {
+  font-weight: 800;
+  color: var(--fg);
+  font-size: 0.95rem;
+  letter-spacing: -0.1px;
+}
+
+.phase-sub {
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
+/* Done — completed phase (cucumber tint) */
+.phase-step.phase-done {
+  background: linear-gradient(135deg, var(--accent-bg), var(--card));
+  border-color: var(--accent);
+}
+.phase-step.phase-done .phase-marker {
+  background: var(--accent);
+  color: white;
+  border-color: var(--accent);
+}
+.phase-step.phase-done .phase-label { color: var(--accent-dk); }
+
+/* Current — active phase (gold pop) */
+.phase-step.phase-current {
+  background: linear-gradient(135deg, var(--gold-bg), var(--card));
+  border-color: var(--gold);
+  box-shadow: 0 4px 16px rgba(245, 178, 66, 0.25);
+  transform: translateY(-2px);
+}
+.phase-step.phase-current .phase-marker {
+  background: var(--gold);
+  color: white;
+  border-color: var(--gold);
+  animation: phase-pulse 2s ease-in-out infinite;
+}
+.phase-step.phase-current .phase-label { color: var(--gold-dark); }
+
+@keyframes phase-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(245, 178, 66, 0.6); }
+  50%       { box-shadow: 0 0 0 8px rgba(245, 178, 66, 0); }
+}
+
+/* Future — upcoming phase (muted) */
+.phase-step.phase-future {
+  opacity: 0.65;
+}
+
+/* Connector between steps */
+.phase-sep {
+  flex: 0 0 24px;
+  align-self: center;
+  height: 2px;
+  background: linear-gradient(to right, var(--border), var(--accent-bg));
+  border-radius: 1px;
+}
+
+@media (max-width: 640px) {
+  .phase-flow { flex-direction: column; }
+  .phase-sep {
+    flex: 0 0 20px;
+    width: 2px;
+    height: 20px;
+    background: linear-gradient(to bottom, var(--border), var(--accent-bg));
+    align-self: center;
+  }
+}
