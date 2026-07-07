@@ -524,12 +524,6 @@ export function teamImageUrl(name) {
   return `images/teams/${teamSlug(name)}.jpg`;
 }
 
-// Per-team focal point overrides (used by team-showcase-photo `onload`).
-// If a slug is missing here, we fall back to auto-detection by aspect ratio.
-const TEAM_FOCAL = {
-  'lord-of-the-dinks': 'center center',
-  'dinky-kong': 'center 55%',
-};
 
 function teamAvatar(name, size = 44) {
   const slug = teamSlug(name);
@@ -585,14 +579,14 @@ function renderShowcaseTeamCard(t, isLocked) {
   const p2Slug = playerSlug(t.player2);
   return `
     <div class="team-showcase-card ${isLocked ? 'locked' : ''}" data-team-id="${t.id}">
-      <div class="team-showcase-photo empty" data-team-slug="${slug}" data-focal="${TEAM_FOCAL[slug] || ''}" data-team-file="images/teams/${slug}.jpg|.png">
+      <div class="team-showcase-photo empty" data-team-slug="${slug}" data-team-file="images/teams/${slug}.jpg|.png">
         <img
           src="images/teams/${slug}.jpg"
           alt="${escapeHtml(t.name)}"
           loading="lazy"
           decoding="async"
           onerror="if(this.dataset.f!=='1'){this.dataset.f='1';this.src='images/teams/${slug}.png';return;}this.style.display='none';"
-          onload="this.parentElement.classList.remove('empty');this.closest('.team-showcase-card')?.classList.add('has-team-image');this.style.objectPosition=this.parentElement.dataset.focal||(this.naturalWidth>=this.naturalHeight?'center 40%':'center 20%');"
+          onload="this.parentElement.classList.remove('empty');this.closest('.team-showcase-card')?.classList.add('has-team-image');"
         />
         ${isLocked && t.pool ? `<span class="team-showcase-pool pool-${t.pool}">Pool ${t.pool}</span>` : ''}
       </div>
