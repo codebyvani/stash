@@ -531,10 +531,12 @@ function teamAvatar(name, size = 44) {
   return `
     <div class="team-avatar" style="width:${size}px;height:${size}px" data-team-slug="${slug}">
       <img
-        src="images/teams/${slug}.png"
+        src="images/teams/${slug}.jpg"
         alt=""
+        loading="lazy"
+        decoding="async"
         onload="this.closest('.team-avatar').classList.add('loaded');"
-        onerror="if(this.dataset.f!=='1'){this.dataset.f='1';this.src='images/teams/${slug}.jpg';return;}this.style.display='none';"
+        onerror="if(this.dataset.f!=='1'){this.dataset.f='1';this.src='images/teams/${slug}.png';return;}this.style.display='none';"
       />
       <span class="team-avatar-initials" style="font-size:${Math.round(size * 0.4)}px">${escapeHtml(initials)}</span>
     </div>
@@ -559,6 +561,8 @@ function playerAvatar(name, size = 40) {
       <img
         src="images/players/${slug}.jpg"
         alt=""
+        loading="lazy"
+        decoding="async"
         onload="this.closest('.player-avatar').classList.add('loaded');this.closest('.team-showcase-player, .overview-card, .team-modal')?.classList.add('has-image');"
         onerror="if(this.dataset.f!=='1'){this.dataset.f='1';this.src='images/players/${slug}.png';return;}this.style.display='none';"
       />
@@ -574,11 +578,13 @@ function renderShowcaseTeamCard(t, isLocked) {
   const p2Slug = playerSlug(t.player2);
   return `
     <div class="team-showcase-card ${isLocked ? 'locked' : ''}" data-team-id="${t.id}">
-      <div class="team-showcase-photo empty" data-team-slug="${slug}" data-team-file="images/teams/${slug}.png|.jpg">
+      <div class="team-showcase-photo empty" data-team-slug="${slug}" data-team-file="images/teams/${slug}.jpg|.png">
         <img
-          src="images/teams/${slug}.png"
+          src="images/teams/${slug}.jpg"
           alt="${escapeHtml(t.name)}"
-          onerror="if(this.dataset.f!=='1'){this.dataset.f='1';this.src='images/teams/${slug}.jpg';return;}this.style.display='none';"
+          loading="lazy"
+          decoding="async"
+          onerror="if(this.dataset.f!=='1'){this.dataset.f='1';this.src='images/teams/${slug}.png';return;}this.style.display='none';"
           onload="this.parentElement.classList.remove('empty');this.closest('.team-showcase-card')?.classList.add('has-team-image');"
         />
         ${isLocked && t.pool ? `<span class="team-showcase-pool pool-${t.pool}">Pool ${t.pool}</span>` : ''}
@@ -1084,6 +1090,7 @@ export function openPlayerDetailModal({ name, skill, teamName }) {
         <img
           src="images/players/${slug}.jpg"
           alt="${escapeHtml(name || '')}"
+          decoding="async"
           onload="this.closest('.player-modal-photo').classList.add('loaded');"
           onerror="if(this.dataset.f!=='1'){this.dataset.f='1';this.src='images/players/${slug}.png';return;}this.style.display='none';"
         />
