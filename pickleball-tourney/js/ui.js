@@ -586,7 +586,7 @@ function renderShowcaseTeamCard(t, isLocked) {
           loading="lazy"
           decoding="async"
           onerror="if(this.dataset.f!=='1'){this.dataset.f='1';this.src='images/teams/${slug}.png';return;}this.style.display='none';"
-          onload="this.parentElement.classList.remove('empty');this.closest('.team-showcase-card')?.classList.add('has-team-image');"
+          onload="this.parentElement.classList.remove('empty');this.closest('.team-showcase-card')?.classList.add('has-team-image');var r=this.naturalWidth/this.naturalHeight;var top=r>=1.33?50:Math.max(5,Math.round(r*30));this.style.objectPosition='center '+top+'%';"
         />
         ${isLocked && t.pool ? `<span class="team-showcase-pool pool-${t.pool}">Pool ${t.pool}</span>` : ''}
       </div>
