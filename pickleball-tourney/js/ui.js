@@ -194,14 +194,14 @@ export function renderPoolStandings(container, rows) {
 
 const SESSION_META = {
   1: {
-    label: 'Session 1 — Tue Jul 7',
+    label: 'Group Stage — Tue Jul 7 (Rounds 1 & 2)',
     time: '6:00 PM start',
-    summary: 'Rounds 1 & 2, 12 matches',
+    summary: '12 matches',
   },
   2: {
-    label: 'Session 2 — Tue Jul 28',
-    time: '6:00 PM start',
-    summary: 'Round 3, 6 matches',
+    label: 'Group Stage — Tue Jul 7 (Round 3)',
+    time: 'same day, extended session',
+    summary: '6 matches',
   },
 };
 
@@ -246,8 +246,11 @@ function getSlotTimeRange(slot) {
   return `${formatClockTime(18, startMin)} – ${formatClockTime(18, startMin + SLOT_MINUTES)}`;
 }
 
-export function renderMatchList(container, matches, onScoreChange) {
-  const enriched = matches.map(m => ({ ...m, ...getMatchSlotInfo(m) }));
+export function renderMatchList(container, matches, onScoreChange, opts = {}) {
+  const lockPools = !!opts.lockPools;
+  const poolMatchesRaw = matches.filter(m => m.stage === 'pool');
+  const playoffMatchesRaw = matches.filter(m => m.stage !== 'pool');
+  const enriched = poolMatchesRaw.map(m => ({ ...m, ...getMatchSlotInfo(m) }));
 
   const bySession = { 1: {}, 2: {} };
   for (const m of enriched) {
@@ -255,7 +258,7 @@ export function renderMatchList(container, matches, onScoreChange) {
     bySession[m.session][m.slot][m.court] = m;
   }
 
-  container.innerHTML = [1, 2].map(sess => {
+  const poolHtml = [1, 2].map(sess => {
     const slots = bySession[sess];
     if (Object.keys(slots).length === 0) return '';
 
@@ -287,16 +290,16 @@ export function renderMatchList(container, matches, onScoreChange) {
                 const m = slot[courtNum];
                 if (!m) return '';
                 return `
-                  <div class="match slot-match" data-match-id="${m.id}">
+                  <div class="match slot-match ${lockPools ? 'locked' : ''}" data-match-id="${m.id}">
                     <span class="court-label">Court ${courtNum}</span>
                     <span class="match-id-badge" title="Type this ID as 'Tourney match ID' in the Pickled app">#${m.id}</span>
                     <div class="team team-a">
                       <span>${escapeHtml(m.team_a_name)}</span>
                     </div>
                     <div class="score-input">
-                      <input type="number" class="score-a" min="0" max="99" value="${m.score_a ?? ''}" placeholder="-" />
+                      <input type="number" class="score-a" min="0" max="99" value="${m.score_a ?? ''}" placeholder="-" ${lockPools ? 'disabled title="Group stage locked — bracket already generated"' : ''} />
                       <span> – </span>
-                      <input type="number" class="score-b" min="0" max="99" value="${m.score_b ?? ''}" placeholder="-" />
+                      <input type="number" class="score-b" min="0" max="99" value="${m.score_b ?? ''}" placeholder="-" ${lockPools ? 'disabled title="Group stage locked — bracket already generated"' : ''} />
                     </div>
                     <div class="team team-b">
                       <span>${escapeHtml(m.team_b_name)}</span>
@@ -311,6 +314,9 @@ export function renderMatchList(container, matches, onScoreChange) {
     `;
   }).join('');
 
+  const playoffHtml = renderPlayoffMatchList(playoffMatchesRaw);
+  container.innerHTML = poolHtml + playoffHtml;
+
   container.querySelectorAll('.slot-match').forEach(el => {
     const id = Number(el.dataset.matchId);
     el.querySelector('.score-a').addEventListener('change', e => {
@@ -320,6 +326,57 @@ export function renderMatchList(container, matches, onScoreChange) {
       onScoreChange(id, 'b', e.target.value);
     });
   });
+}
+
+const PLAYOFF_LABEL = {
+  qf: 'Quarterfinal',
+  sf: 'Semifinal',
+  final: 'Final',
+  '3rd': '3rd Place',
+};
+
+function renderPlayoffMatchList(matches) {
+  if (matches.length === 0) return '';
+  // Order: qf1, qf2, sf1, sf2, final, 3rd
+  const order = ['qf', 'sf', 'final', '3rd'];
+  const sorted = matches.slice().sort((a, b) => {
+    const oa = order.indexOf(a.stage);
+    const ob = order.indexOf(b.stage);
+    if (oa !== ob) return oa - ob;
+    return (a.round || 0) - (b.round || 0);
+  });
+  const total = sorted.length;
+  const played = sorted.filter(m => m.score_a != null && m.score_b != null).length;
+  return `
+    <section class="session-section playoffs-section">
+      <header class="session-header">
+        <div>
+          <h4>🏆 Playoffs</h4>
+          <div class="session-subtitle">Quarterfinals → Semifinals → Final</div>
+        </div>
+        <span class="session-progress">${played} / ${total} played</span>
+      </header>
+      ${sorted.map((m) => {
+        const key = m.stage === '3rd' ? '3rd'
+          : m.stage === 'final' ? 'final'
+          : m.stage + m.round;
+        const label = PLAYOFF_LABEL[m.stage] + (['qf', 'sf'].includes(m.stage) ? ` ${m.round}` : '');
+        return `
+          <div class="match slot-match" data-match-id="${m.id}">
+            <span class="court-label">${escapeHtml(label)}</span>
+            <span class="match-id-badge" title="Type this ID as 'Tourney match ID' in the Pickled app">#${key}</span>
+            <div class="team team-a"><span>${escapeHtml(m.team_a_name || 'TBD')}</span></div>
+            <div class="score-input">
+              <input type="number" class="score-a" min="0" max="99" value="${m.score_a ?? ''}" placeholder="-" ${m.team_a_name ? '' : 'disabled'} />
+              <span> – </span>
+              <input type="number" class="score-b" min="0" max="99" value="${m.score_b ?? ''}" placeholder="-" ${m.team_b_name ? '' : 'disabled'} />
+            </div>
+            <div class="team team-b"><span>${escapeHtml(m.team_b_name || 'TBD')}</span></div>
+          </div>
+        `;
+      }).join('')}
+    </section>
+  `;
 }
 
 export function renderScoringEmpty(container, reason) {
@@ -380,7 +437,8 @@ function matchCard(key, label, match, role) {
   `;
 }
 
-export function renderVisualBracket(container, state, onPlayoffScore) {
+export function renderVisualBracket(container, state, onPlayoffScore, opts = {}) {
+  const showSeedList = opts.showSeedList !== false;
   if (!state.complete) {
     container.innerHTML = `
       <div class="bracket-locked">
@@ -465,14 +523,16 @@ export function renderVisualBracket(container, state, onPlayoffScore) {
         </div>
       </div>
 
-      <div class="bracket-seed-list">
-        <h4>Seeds</h4>
-        <ol>
-          ${seeds.map(s => `
-            <li><strong>#${s.seed}</strong> ${escapeHtml(s.name)} <span class="muted">(Pool ${s.pool})</span></li>
-          `).join('')}
-        </ol>
-      </div>
+      ${showSeedList ? `
+        <div class="bracket-seed-list">
+          <h4>Seeds</h4>
+          <ol>
+            ${seeds.map(s => `
+              <li><strong>#${s.seed}</strong> ${escapeHtml(s.name)} <span class="muted">(Pool ${s.pool})</span></li>
+            `).join('')}
+          </ol>
+        </div>` : ''
+      }
     </div>
   `;
 
@@ -636,12 +696,15 @@ export function renderOverview(container, ctx) {
     lastUpdated,         // date-ish string
     bracket,             // { complete, seeds, matches: {qf1, qf2, sf1, sf2, final, third} }
     poolStageComplete,
+    seeds = [],          // top playoff seeds after group stage
+    onPlayoffScoreChange,
   } = ctx;
 
   const hero = renderHero(matches, poolsLocked, teamCount);
   const recent = renderOverviewRecent(matches);
   const upcoming = renderOverviewUpcoming(matches);
-  const bracketPreview = renderOverviewBracket(bracket, poolStageComplete);
+  const seedsStrip = seeds.length > 0 ? renderOverviewSeeds(seeds) : '';
+  const showFullBracket = poolStageComplete;
 
   container.innerHTML = `
     <section class="overview-hero" data-anim>${hero}</section>
@@ -653,12 +716,28 @@ export function renderOverview(container, ctx) {
       <div class="overview-strip-label">Coming up</div>
       ${upcoming}
     </section>
-    <section class="overview-strip" data-anim>
+    ${seedsStrip ? `
+      <section class="overview-strip" data-anim>
+        <div class="overview-strip-label">Top seeds · Group stage complete</div>
+        ${seedsStrip}
+      </section>` : ''
+    }
+    <section class="overview-strip overview-bracket-strip" data-anim>
       <div class="overview-strip-label">Bracket</div>
-      ${bracketPreview}
+      ${showFullBracket
+        ? '<div id="overview-bracket-view"></div>'
+        : renderOverviewBracket(bracket, poolStageComplete)
+      }
     </section>
     ${lastUpdated ? `<p class="overview-updated">Snapshot loaded: ${escapeHtml(lastUpdated)}</p>` : ''}
   `;
+
+  if (showFullBracket && bracket) {
+    const bracketEl = container.querySelector('#overview-bracket-view');
+    if (bracketEl) {
+      renderVisualBracket(bracketEl, bracket, onPlayoffScoreChange || (() => {}), { showSeedList: false });
+    }
+  }
 
   activateScrollFadeIn(container);
   activateHeroSlideshow(container);
@@ -838,6 +917,52 @@ function overviewUpcomingCard(m) {
       <div class="overview-card-line">
         ${teamAvatar(m.team_b_name, 32)}
         <span class="overview-card-name">${escapeHtml(m.team_b_name)}</span>
+      </div>
+    </div>
+  `;
+}
+
+function renderOverviewSeeds(seeds) {
+  const winners = seeds.filter((s) => s.seed <= 3);
+  const runners = seeds.filter((s) => s.seed > 3);
+  return `
+    <div class="seed-section">
+      <div class="seed-section-label">🏆 Pool Winners</div>
+      <div class="seed-row seed-row-winners">
+        ${winners.map((s, i) => renderSeedCard(s, 'winner', i)).join('')}
+      </div>
+    </div>
+    <div class="seed-section">
+      <div class="seed-section-label">Runner-ups</div>
+      <div class="seed-row seed-row-runners">
+        ${runners.map((s, i) => renderSeedCard(s, 'runner', i)).join('')}
+      </div>
+    </div>
+  `;
+}
+
+function renderSeedCard(s, stage, indexInRow) {
+  const slug = teamSlug(s.name);
+  const wins = s.wins ?? '?';
+  const losses = s.losses ?? '?';
+  const diff = s.pt_diff > 0 ? '+' + s.pt_diff : s.pt_diff;
+  const avatarSize = stage === 'winner' ? 120 : 88;
+  return `
+    <div class="seed-card seed-${stage}" data-seed="${s.seed}" style="--seed-delay:${indexInRow * 90}ms">
+      <div class="seed-bg" style="background-image:url('images/teams/${slug}.jpg')"></div>
+      <div class="seed-content">
+        <div class="seed-photo">
+          ${teamAvatar(s.name, avatarSize)}
+          <div class="seed-badge">#${s.seed}</div>
+        </div>
+        <div class="seed-body">
+          <div class="seed-pool">Pool ${s.pool} · ${stage === 'winner' ? 'Winner' : 'Runner-up'}</div>
+          <div class="seed-name">${escapeHtml(s.name)}</div>
+          <div class="seed-record">
+            <span>${wins}W · ${losses}L</span>
+            <span class="seed-diff">${diff}</span>
+          </div>
+        </div>
       </div>
     </div>
   `;

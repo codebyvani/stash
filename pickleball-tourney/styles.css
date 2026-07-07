@@ -662,7 +662,7 @@ pre {
 /* Override .match styling for scoring-tab slot matches to add court column */
 .slot-match {
   display: grid;
-  grid-template-columns: 4rem 1fr auto 1fr;
+  grid-template-columns: minmax(5rem, auto) auto 1fr auto 1fr;
   align-items: center;
   gap: 0.5rem;
   padding: 0.5rem 0.75rem;
@@ -2521,3 +2521,218 @@ body.tab-overview .page-hero {
   transition: background 0.15s ease;
 }
 .team-showcase-player:hover { background: var(--bg); }
+
+/* ────────────────────────────────────────────────────────── */
+/* Top seeds showcase (Overview, post group stage)             */
+/* ────────────────────────────────────────────────────────── */
+
+.seed-section {
+  margin-bottom: 1.75rem;
+}
+
+.seed-section:last-child { margin-bottom: 0; }
+
+.seed-section-label {
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--accent-dk);
+  margin-bottom: 0.85rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.seed-row {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.25rem;
+}
+
+@media (max-width: 720px) {
+  .seed-row { grid-template-columns: 1fr; }
+}
+
+.seed-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  background: var(--card);
+  isolation: isolate;
+  box-shadow: 0 4px 14px rgba(27, 46, 17, 0.06);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  opacity: 0;
+  transform: translateY(14px);
+  animation: seed-in 0.6s ease forwards;
+  animation-delay: var(--seed-delay, 0ms);
+}
+
+@keyframes seed-in {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.seed-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 14px 32px rgba(27, 46, 17, 0.14);
+}
+
+/* Blurred team photo background */
+.seed-bg {
+  position: absolute;
+  inset: -30px;
+  background-size: cover;
+  background-position: center;
+  filter: blur(24px) brightness(0.55) saturate(1.1);
+  transform: scale(1.15);
+  z-index: -1;
+}
+
+.seed-content {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 1.5rem 1.25rem 1.25rem;
+  color: white;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+}
+
+.seed-card.seed-winner .seed-content {
+  padding: 1.85rem 1.25rem 1.5rem;
+}
+
+.seed-photo {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.seed-photo .team-avatar {
+  border: 4px solid rgba(255, 255, 255, 0.9);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+}
+
+.seed-card.seed-winner .seed-photo .team-avatar {
+  border-color: var(--gold);
+  box-shadow: 0 8px 26px rgba(245, 178, 66, 0.5);
+}
+
+.seed-badge {
+  position: absolute;
+  bottom: -6px;
+  right: -8px;
+  min-width: 34px;
+  height: 34px;
+  padding: 0 8px;
+  border-radius: 999px;
+  background: var(--fg);
+  color: white;
+  font-size: 0.9rem;
+  font-weight: 900;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 3px solid white;
+  letter-spacing: -0.3px;
+}
+
+.seed-card.seed-winner .seed-badge {
+  background: var(--gold);
+  color: white;
+  min-width: 40px;
+  height: 40px;
+  font-size: 1rem;
+  bottom: -8px;
+  right: -10px;
+}
+
+.seed-body {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  width: 100%;
+}
+
+.seed-pool {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.seed-name {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: white;
+  letter-spacing: -0.2px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
+  padding: 0 0.25rem;
+}
+
+.seed-card.seed-winner .seed-name {
+  font-size: 1.35rem;
+  letter-spacing: -0.4px;
+}
+
+.seed-record {
+  font-size: 0.82rem;
+  color: rgba(255, 255, 255, 0.9);
+  display: flex;
+  gap: 0.6rem;
+  align-items: center;
+  font-variant-numeric: tabular-nums;
+  margin-top: 0.15rem;
+}
+
+.seed-diff {
+  padding: 2px 8px;
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(4px);
+  border-radius: 999px;
+  font-weight: 700;
+  color: white;
+}
+
+.seed-card.seed-runner {
+  /* Smaller cards for runner-ups */
+}
+
+.seed-card.seed-runner .seed-content {
+  padding: 1.1rem 1rem 1rem;
+  gap: 0.6rem;
+}
+
+.seed-card.seed-runner .seed-name {
+  font-size: 0.95rem;
+}
+
+/* Playoffs section on Schedule tab */
+.playoffs-section .session-header {
+  background: linear-gradient(90deg, var(--gold-bg), var(--card));
+  border: 1px solid var(--gold);
+}
+
+.playoffs-section .session-header h4 {
+  color: var(--gold-dark);
+}
+
+/* Group stage locked (once bracket has generated) */
+.slot-match.locked .score-input input[disabled] {
+  background: #EEF3E6;
+  color: var(--fg);
+  opacity: 1;
+  cursor: not-allowed;
+  border-color: var(--border);
+}
+
+.slot-match.locked {
+  background: #FAFCF5;
+}

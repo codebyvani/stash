@@ -14,6 +14,7 @@ import {
   getMatchIdByKey,
   matchesForTeam,
   getTeamById,
+  playoffSeeds,
 } from './queries.js';
 import {
   renderTeamsTab,
@@ -350,17 +351,27 @@ function refreshOverview() {
   if (!container) return;
   const teams = getAllTeams();
   const locked = isPoolDrawLocked();
-  const allMatches = locked
-    ? ['A', 'B', 'C'].flatMap(p => poolMatches(p))
-    : [];
   const bracket = locked ? getBracketState() : { complete: false, matches: {} };
+  const stageDone = poolStageComplete();
+
+  const poolMatchList = locked ? ['A', 'B', 'C'].flatMap(p => poolMatches(p)) : [];
+  const bracketList = stageDone && bracket.matches
+    ? [
+        bracket.matches.qf1, bracket.matches.qf2,
+        bracket.matches.sf1, bracket.matches.sf2,
+        bracket.matches.final, bracket.matches.third,
+      ].filter(Boolean)
+    : [];
+  const allMatches = [...poolMatchList, ...bracketList];
   renderOverview(container, {
     poolsLocked: locked,
     teamCount: teams.length,
     matches: allMatches,
     lastUpdated: getSnapshotUpdatedLabel(),
     bracket,
-    poolStageComplete: poolStageComplete(),
+    poolStageComplete: stageDone,
+    seeds: stageDone ? playoffSeeds() : [],
+    onPlayoffScoreChange,
   });
   activateMatchIdCopy(container);
 }
@@ -476,13 +487,22 @@ function refreshScoring() {
   }
 
   // Schedule tab: filter chips + match list
-  const allMatches = ['A', 'B', 'C'].flatMap(p => poolMatches(p));
+  const poolList = ['A', 'B', 'C'].flatMap(p => poolMatches(p));
+  const bracketState = getBracketState();
+  const playoffList = bracketState.matches
+    ? [
+        bracketState.matches.qf1, bracketState.matches.qf2,
+        bracketState.matches.sf1, bracketState.matches.sf2,
+        bracketState.matches.final, bracketState.matches.third,
+      ].filter(Boolean)
+    : [];
+  const allMatches = [...poolList, ...playoffList];
   const counts = {
     all: allMatches.length,
     'session-1': allMatches.filter(m => m.stage === 'pool' && m.round <= 2).length,
     'session-2': allMatches.filter(m => m.stage === 'pool' && m.round === 3).length,
     unplayed: allMatches.filter(m => m.score_a == null || m.score_b == null).length,
-    playoffs: allMatches.filter(m => m.stage !== 'pool').length,
+    playoffs: playoffList.length,
   };
   ensureFilterMount();
   const filterMount = document.getElementById('schedule-filters');
@@ -495,7 +515,9 @@ function refreshScoring() {
 
   const visibleMatches = filterMatches(allMatches, scheduleFilter);
   const matchListEl = document.getElementById('match-list');
-  renderMatchList(matchListEl, visibleMatches, onPoolScoreChange);
+  renderMatchList(matchListEl, visibleMatches, onPoolScoreChange, {
+    lockPools: poolStageComplete(),
+  });
   activateMatchIdCopy(matchListEl);
 }
 
