@@ -534,8 +534,11 @@ function refreshScoring() {
 
   const visibleMatches = filterMatches(allMatches, scheduleFilter);
   const matchListEl = document.getElementById('match-list');
+  const finalMatch = bracketState.matches?.final;
+  const finalPlayed = !!(finalMatch && finalMatch.score_a != null && finalMatch.score_b != null);
   renderMatchList(matchListEl, visibleMatches, onPoolScoreChange, {
     lockPools: poolStageComplete(),
+    lockPlayoffs: finalPlayed,
   });
   activateMatchIdCopy(matchListEl);
 }
@@ -554,7 +557,9 @@ function refreshBracket() {
   const container = document.getElementById('bracket-view');
   if (!container) return;
   const state = getBracketState();
-  renderVisualBracket(container, state, onPlayoffScoreChange);
+  const finalMatch = state.matches?.final;
+  const finalPlayed = !!(finalMatch && finalMatch.score_a != null && finalMatch.score_b != null);
+  renderVisualBracket(container, state, onPlayoffScoreChange, { lockPlayoffs: finalPlayed });
 }
 
 function refreshAdmin() {

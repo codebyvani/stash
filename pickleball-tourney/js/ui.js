@@ -248,6 +248,7 @@ function getSlotTimeRange(slot) {
 
 export function renderMatchList(container, matches, onScoreChange, opts = {}) {
   const lockPools = !!opts.lockPools;
+  const lockPlayoffs = !!opts.lockPlayoffs;
   const poolMatchesRaw = matches.filter(m => m.stage === 'pool');
   const playoffMatchesRaw = matches.filter(m => m.stage !== 'pool');
   const enriched = poolMatchesRaw.map(m => ({ ...m, ...getMatchSlotInfo(m) }));
@@ -314,7 +315,7 @@ export function renderMatchList(container, matches, onScoreChange, opts = {}) {
     `;
   }).join('');
 
-  const playoffHtml = renderPlayoffMatchList(playoffMatchesRaw);
+  const playoffHtml = renderPlayoffMatchList(playoffMatchesRaw, lockPlayoffs);
   container.innerHTML = poolHtml + playoffHtml;
 
   container.querySelectorAll('.slot-match').forEach(el => {
@@ -335,7 +336,7 @@ const PLAYOFF_LABEL = {
   '3rd': '3rd Place',
 };
 
-function renderPlayoffMatchList(matches) {
+function renderPlayoffMatchList(matches, lockPlayoffs = false) {
   if (matches.length === 0) return '';
   // Order: qf1, qf2, sf1, sf2, final, 3rd
   const order = ['qf', 'sf', 'final', '3rd'];
@@ -361,15 +362,17 @@ function renderPlayoffMatchList(matches) {
           : m.stage === 'final' ? 'final'
           : m.stage + m.round;
         const label = PLAYOFF_LABEL[m.stage] + (['qf', 'sf'].includes(m.stage) ? ` ${m.round}` : '');
+        const disabled = lockPlayoffs || !m.team_a_name || !m.team_b_name;
+        const lockTitle = lockPlayoffs ? 'Tournament complete — playoffs locked' : '';
         return `
-          <div class="match slot-match" data-match-id="${m.id}">
+          <div class="match slot-match ${lockPlayoffs ? 'locked' : ''}" data-match-id="${m.id}">
             <span class="court-label">${escapeHtml(label)}</span>
             <span class="match-id-badge" title="Type this ID as 'Tourney match ID' in the Pickled app">#${key}</span>
             <div class="team team-a"><span>${escapeHtml(m.team_a_name || 'TBD')}</span></div>
             <div class="score-input">
-              <input type="number" class="score-a" min="0" max="99" value="${m.score_a ?? ''}" placeholder="-" ${m.team_a_name ? '' : 'disabled'} />
+              <input type="number" class="score-a" min="0" max="99" value="${m.score_a ?? ''}" placeholder="-" ${disabled ? `disabled title="${lockTitle}"` : ''} />
               <span> – </span>
-              <input type="number" class="score-b" min="0" max="99" value="${m.score_b ?? ''}" placeholder="-" ${m.team_b_name ? '' : 'disabled'} />
+              <input type="number" class="score-b" min="0" max="99" value="${m.score_b ?? ''}" placeholder="-" ${disabled ? `disabled title="${lockTitle}"` : ''} />
             </div>
             <div class="team team-b"><span>${escapeHtml(m.team_b_name || 'TBD')}</span></div>
           </div>
@@ -385,7 +388,7 @@ export function renderScoringEmpty(container, reason) {
 
 // ───── Visual bracket ─────
 
-function matchCard(key, label, match, role) {
+function matchCard(key, label, match, role, lockPlayoffs = false) {
   const hasMatch = !!match;
   const aSet = role.a != null;
   const bSet = role.b != null;
@@ -398,18 +401,20 @@ function matchCard(key, label, match, role) {
   const isFinal = role.isFinal;
   const maxScore = isFinal ? 2 : 99;
   const scoreHint = isFinal ? 'Bo3: games won (first to 2)' : 'Game to 11';
+  const disabled = !hasMatch || lockPlayoffs;
+  const lockTitle = lockPlayoffs ? 'Tournament complete — locked' : '';
 
   const inputs = `
     <div class="match-inputs">
       <input type="number" class="score-input score-a"
         data-match-key="${key}" data-side="a"
         min="0" max="${maxScore}" value="${scoreA ?? ''}"
-        placeholder="-" ${!hasMatch ? 'disabled' : ''} />
+        placeholder="-" ${disabled ? `disabled title="${lockTitle}"` : ''} />
       <span class="dash">–</span>
       <input type="number" class="score-input score-b"
         data-match-key="${key}" data-side="b"
         min="0" max="${maxScore}" value="${scoreB ?? ''}"
-        placeholder="-" ${!hasMatch ? 'disabled' : ''} />
+        placeholder="-" ${disabled ? `disabled title="${lockTitle}"` : ''} />
     </div>
   `;
 
@@ -439,6 +444,7 @@ function matchCard(key, label, match, role) {
 
 export function renderVisualBracket(container, state, onPlayoffScore, opts = {}) {
   const showSeedList = opts.showSeedList !== false;
+  const lockPlayoffs = !!opts.lockPlayoffs;
   if (!state.complete) {
     container.innerHTML = `
       <div class="bracket-locked">
@@ -494,17 +500,17 @@ export function renderVisualBracket(container, state, onPlayoffScore, opts = {})
       <div class="bracket-rounds">
         <div class="round" data-round="qf">
           <div class="round-label">Quarterfinals</div>
-          ${matchCard('qf1', 'QF1', matches.qf1, qf1Role)}
-          ${matchCard('qf2', 'QF2', matches.qf2, qf2Role)}
+          ${matchCard('qf1', 'QF1', matches.qf1, qf1Role, lockPlayoffs)}
+          ${matchCard('qf2', 'QF2', matches.qf2, qf2Role, lockPlayoffs)}
         </div>
         <div class="round" data-round="sf">
           <div class="round-label">Semifinals</div>
-          ${matchCard('sf1', 'SF1', matches.sf1, sf1Role)}
-          ${matchCard('sf2', 'SF2', matches.sf2, sf2Role)}
+          ${matchCard('sf1', 'SF1', matches.sf1, sf1Role, lockPlayoffs)}
+          ${matchCard('sf2', 'SF2', matches.sf2, sf2Role, lockPlayoffs)}
         </div>
         <div class="round" data-round="final">
           <div class="round-label">Final (Bo3)</div>
-          ${matchCard('final', 'Final', matches.final, finalRole)}
+          ${matchCard('final', 'Final', matches.final, finalRole, lockPlayoffs)}
         </div>
         <div class="round" data-round="champion">
           <div class="round-label">Champion</div>
@@ -519,7 +525,7 @@ export function renderVisualBracket(container, state, onPlayoffScore, opts = {})
       <div class="third-place-section">
         <div class="round-label">3rd Place Playoff</div>
         <div class="third-place-card">
-          ${matchCard('third', '3rd Place', matches.third, thirdRole)}
+          ${matchCard('third', '3rd Place', matches.third, thirdRole, lockPlayoffs)}
         </div>
       </div>
 
@@ -720,7 +726,7 @@ export function renderOverview(container, ctx) {
       <section class="overview-strip" data-anim>
         <div class="overview-strip-label">Top seeds · Group stage complete</div>
         ${seedsStrip}
-        <a class="overview-prize-hint" href="#rules">🏆 Prize pool: <strong>₱7,000</strong> up for grabs · see splits →</a>
+        <a class="overview-prize-hint" href="#rules">🏆 Prize pool: <strong>₱8,000</strong> up for grabs · see splits →</a>
       </section>` : ''
     }
     <section class="overview-strip overview-bracket-strip" data-anim>
@@ -736,7 +742,12 @@ export function renderOverview(container, ctx) {
   if (showFullBracket && bracket) {
     const bracketEl = container.querySelector('#overview-bracket-view');
     if (bracketEl) {
-      renderVisualBracket(bracketEl, bracket, onPlayoffScoreChange || (() => {}), { showSeedList: false });
+      const finalMatch = bracket.matches?.final;
+      const finalPlayed = !!(finalMatch && finalMatch.score_a != null && finalMatch.score_b != null);
+      renderVisualBracket(bracketEl, bracket, onPlayoffScoreChange || (() => {}), {
+        showSeedList: false,
+        lockPlayoffs: finalPlayed,
+      });
     }
   }
 
