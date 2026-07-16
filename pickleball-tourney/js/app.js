@@ -382,6 +382,25 @@ function refreshOverview() {
       ].filter(Boolean)
     : [];
   const allMatches = [...poolMatchList, ...bracketList];
+
+  // If the tournament is fully wrapped up, compute the top-3 podium.
+  const finalMatch = bracket.matches?.final;
+  const thirdMatch = bracket.matches?.third;
+  const tourneyDone = !!(finalMatch && finalMatch.score_a != null && finalMatch.score_b != null
+                     && thirdMatch && thirdMatch.score_a != null && thirdMatch.score_b != null);
+  let podium = null;
+  if (tourneyDone) {
+    const championName = finalMatch.score_a > finalMatch.score_b ? finalMatch.team_a_name : finalMatch.team_b_name;
+    const runnerName   = finalMatch.score_a > finalMatch.score_b ? finalMatch.team_b_name : finalMatch.team_a_name;
+    const thirdName    = thirdMatch.score_a > thirdMatch.score_b ? thirdMatch.team_a_name : thirdMatch.team_b_name;
+    const byName = new Map(teams.map((t) => [t.name, t]));
+    podium = {
+      champion: byName.get(championName) || { name: championName },
+      runnerUp: byName.get(runnerName) || { name: runnerName },
+      third:    byName.get(thirdName) || { name: thirdName },
+    };
+  }
+
   renderOverview(container, {
     poolsLocked: locked,
     teamCount: teams.length,
@@ -390,6 +409,7 @@ function refreshOverview() {
     bracket,
     poolStageComplete: stageDone,
     seeds: stageDone ? playoffSeeds() : [],
+    podium,
     onPlayoffScoreChange,
   });
   activateMatchIdCopy(container);

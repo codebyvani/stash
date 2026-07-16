@@ -703,30 +703,35 @@ export function renderOverview(container, ctx) {
     bracket,             // { complete, seeds, matches: {qf1, qf2, sf1, sf2, final, third} }
     poolStageComplete,
     seeds = [],          // top playoff seeds after group stage
+    podium,              // { champion, runnerUp, third } when tournament is over
     onPlayoffScoreChange,
   } = ctx;
 
-  const hero = renderHero(matches, poolsLocked, teamCount);
+  const hero = podium
+    ? renderPodium(podium)
+    : renderHero(matches, poolsLocked, teamCount);
   const recent = renderOverviewRecent(matches);
   const upcoming = renderOverviewUpcoming(matches);
   const seedsStrip = seeds.length > 0 ? renderOverviewSeeds(seeds) : '';
   const showFullBracket = poolStageComplete;
 
   container.innerHTML = `
-    <section class="overview-hero" data-anim>${hero}</section>
+    <section class="overview-hero ${podium ? 'overview-hero-podium' : ''}" data-anim>${hero}</section>
     <section class="overview-strip" data-anim>
-      <div class="overview-strip-label">Recent results</div>
+      <div class="overview-strip-label">${podium ? 'Final results' : 'Recent results'}</div>
       ${recent}
     </section>
-    <section class="overview-strip" data-anim>
-      <div class="overview-strip-label">Coming up</div>
-      ${upcoming}
-    </section>
+    ${podium ? '' : `
+      <section class="overview-strip" data-anim>
+        <div class="overview-strip-label">Coming up</div>
+        ${upcoming}
+      </section>`
+    }
     ${seedsStrip ? `
       <section class="overview-strip" data-anim>
         <div class="overview-strip-label">Top seeds · Group stage complete</div>
         ${seedsStrip}
-        <a class="overview-prize-hint" href="#prize">🏆 Prize pool: <strong>₱8,000</strong> up for grabs · see splits →</a>
+        ${podium ? '' : '<a class="overview-prize-hint" href="#prize">🏆 Prize pool: <strong>₱8,000</strong> up for grabs · see splits →</a>'}
       </section>` : ''
     }
     <section class="overview-strip overview-bracket-strip" data-anim>
@@ -831,6 +836,47 @@ function renderHero(matches, locked, teamCount) {
       <div class="hero-eyebrow">Ready to play</div>
       <div class="hero-title">Pools drawn · 18 pool matches queued</div>
       <p class="hero-sub">Head to <a href="#schedule">Schedule</a> to enter scores as matches finish.</p>
+    </div>
+  `;
+}
+
+function podiumCard(team, place) {
+  const meta = {
+    1: { label: 'Champion', medal: '🥇', className: 'podium-1', size: 128 },
+    2: { label: 'Runner-up', medal: '🥈', className: 'podium-2', size: 100 },
+    3: { label: '3rd place', medal: '🥉', className: 'podium-3', size: 100 },
+  }[place];
+  const p1 = team.player1 || '';
+  const p2 = team.player2 || '';
+  return `
+    <div class="podium-card ${meta.className}">
+      <div class="podium-medal">${meta.medal}</div>
+      <div class="podium-place">${meta.label}</div>
+      <div class="podium-photos">
+        ${playerAvatar(p1, meta.size)}
+        ${playerAvatar(p2, meta.size)}
+      </div>
+      <div class="podium-players">
+        <span>${escapeHtml(p1 || '—')}</span>
+        <span class="podium-amp">&amp;</span>
+        <span>${escapeHtml(p2 || '—')}</span>
+      </div>
+      <div class="podium-team">${escapeHtml(team.name)}</div>
+      <div class="podium-block"></div>
+    </div>
+  `;
+}
+
+function renderPodium({ champion, runnerUp, third }) {
+  return `
+    <div class="podium-hero">
+      <div class="podium-eyebrow">🏆 Tournament complete</div>
+      <div class="podium-stage">
+        ${podiumCard(runnerUp, 2)}
+        ${podiumCard(champion, 1)}
+        ${podiumCard(third, 3)}
+      </div>
+      <a class="podium-cta" href="#prize">See full prize splits →</a>
     </div>
   `;
 }
