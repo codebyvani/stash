@@ -19,7 +19,8 @@
         <a href="#schedule" data-tab="schedule">Schedule</a>
         <a href="#standings" data-tab="standings">Standings</a>
         <a href="#teams" data-tab="teams">Teams</a>
-        <a href="#rules" data-tab="rules">Rules</a>
+        <a href="#info" data-tab="info">Info</a>
+        <a href="#prize" data-tab="prize">Prize Pool</a>
       </nav>
       <button id="admin-gear" class="admin-gear" title="Admin" aria-label="Admin">⚙️</button>
     </div>
@@ -84,8 +85,8 @@
       <div id="teams-content"></div>
     </section>
 
-    <!-- RULES -->
-    <section id="rules" class="tab" hidden>
+    <!-- INFO (format, tiers, scoring, sessions) -->
+    <section id="info" class="tab" hidden>
       <h2>Format</h2>
 
       <div class="format-grid">
@@ -161,17 +162,22 @@
           </div>
           <div class="session-status">✅ Complete</div>
         </div>
-        <div class="session-item session-pending">
+        <div class="session-item session-done">
           <div class="session-dot"></div>
           <div class="session-body">
-            <div class="session-title">Playoffs · <span class="muted">TBD</span></div>
-            <div class="session-detail">Target: 1st week of August · QF → SF → 3rd → Bo3 Final</div>
+            <div class="session-title">Playoffs · <span class="muted">Wed Jul 16</span></div>
+            <div class="session-detail">QF → SF → 3rd → Bo3 Final at Magnum</div>
           </div>
-          <div class="session-status">Coming up</div>
+          <div class="session-status">✅ Complete</div>
         </div>
       </div>
 
-      <h3>🏅 Prize Pool</h3>
+    </section>
+
+    <!-- PRIZE POOL (its own tab) -->
+    <section id="prize" class="tab" hidden>
+      <h2>🏅 Prize Pool</h2>
+
       <div class="prize-pool-callout">
         <div class="prize-pool-total">
           <span class="prize-pool-label">Total pool</span>
@@ -189,20 +195,44 @@
         </div>
       </div>
 
+      <h3>🏆 Winners</h3>
       <table class="prize-split-table">
         <thead>
-          <tr><th>Place</th><th>Share</th></tr>
+          <tr><th>Place</th><th>Team</th><th>Share</th><th>Amount</th></tr>
         </thead>
         <tbody>
-          <tr class="prize-champion"><td>🥇 Champion</td><td>40%</td></tr>
-          <tr><td>🥈 Runner-up</td><td>24%</td></tr>
-          <tr><td>🥉 3rd</td><td>16%</td></tr>
-          <tr><td>4th</td><td>12%</td></tr>
-          <tr><td>5th &amp; 6th</td><td>8% (4% each)</td></tr>
+          <tr class="prize-champion">
+            <td>🥇 Champion</td>
+            <td><strong>Renan &amp; Flo</strong></td>
+            <td>40%</td>
+            <td><strong>₱3,200</strong></td>
+          </tr>
+          <tr>
+            <td>🥈 Runner-up</td>
+            <td><strong>ML NA LANG TA</strong></td>
+            <td>24%</td>
+            <td>₱1,920</td>
+          </tr>
+          <tr>
+            <td>🥉 3rd</td>
+            <td><strong>Dink ang Bato !</strong></td>
+            <td>16%</td>
+            <td>₱1,280</td>
+          </tr>
+          <tr>
+            <td>4th</td>
+            <td><strong>4K Hi-def</strong></td>
+            <td>12%</td>
+            <td>₱960</td>
+          </tr>
+          <tr>
+            <td>5th &amp; 6th</td>
+            <td><strong>Team HP · Lord of the Dinks</strong></td>
+            <td>8% (4% each)</td>
+            <td>₱320 each</td>
+          </tr>
         </tbody>
       </table>
-      <p class="muted prize-pool-footer">Final per-team amounts will be announced on championship day based on the total pool.</p>
-
     </section>
 
     <!-- ADMIN (hidden by default; toggled by gear icon) -->

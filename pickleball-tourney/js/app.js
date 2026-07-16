@@ -38,7 +38,7 @@ import { initAutoImport, scanPickledMatch, stopScan } from './qr-receiver.js';
 let pendingDraw = null;
 
 const TAB_ALIASES = {
-  info: 'rules',
+  rules: 'info',
   scoring: 'schedule',
   bracket: 'standings',
 };
@@ -407,7 +407,7 @@ function refreshSyncPill() {
   const pill = document.getElementById('sync-pill');
   if (!pill) return;
   const currentTab = resolveTab(window.location.hash);
-  const hide = currentTab === 'admin' || currentTab === 'rules';
+  const hide = currentTab === 'admin' || currentTab === 'info' || currentTab === 'prize';
   pill.hidden = hide;
 }
 
