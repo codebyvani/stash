@@ -249,11 +249,11 @@ export function syncBracket() {
   const qf1Winner = winnerOf(qf1);
   const qf2Winner = winnerOf(qf2);
 
-  if (qf2Winner) ensureMatch('sf', 1, seeds[0].id, qf2Winner);
-  if (qf1Winner) ensureMatch('sf', 2, seeds[1].id, qf1Winner);
+  if (qf1Winner) ensureMatch('sf', 1, seeds[0].id, qf1Winner);
+  if (qf2Winner) ensureMatch('sf', 2, seeds[1].id, qf2Winner);
 
-  const sf1 = qf2Winner ? getPlayoffMatch('sf', 1) : null;
-  const sf2 = qf1Winner ? getPlayoffMatch('sf', 2) : null;
+  const sf1 = qf1Winner ? getPlayoffMatch('sf', 1) : null;
+  const sf2 = qf2Winner ? getPlayoffMatch('sf', 2) : null;
   const sf1Winner = winnerOf(sf1);
   const sf2Winner = winnerOf(sf2);
   const sf1Loser = loserOf(sf1);
