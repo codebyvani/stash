@@ -731,7 +731,7 @@ export function renderOverview(container, ctx) {
       <section class="overview-strip" data-anim>
         <div class="overview-strip-label">Top seeds · Group stage complete</div>
         ${seedsStrip}
-        ${podium ? '' : '<a class="overview-prize-hint" href="#prize">🏆 Prize pool: <strong>₱8,000</strong> up for grabs · see splits →</a>'}
+        ${podium ? '' : '<a class="overview-prize-hint" href="#prize">🏆 Prize pool: <strong>₱10,000</strong> up for grabs · see splits →</a>'}
       </section>` : ''
     }
     <section class="overview-strip overview-bracket-strip" data-anim>
