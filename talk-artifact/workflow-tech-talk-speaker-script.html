@@ -1,0 +1,152 @@
+<title>Workflow Talk — Speaker Script</title>
+<style>
+  :root{
+    --bg:#06131e; --bg2:#0a2030; --ink:#F1F7FC; --soft:#9FBDD0; --line:#1d3d52;
+    --blue:#2E7EC7; --bright:#5AC0F2; --amber:#F5B23E; --card:#0e2536;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;
+    --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box}
+  body{margin:0; background:var(--bg);
+    color:var(--ink); font-family:var(--sans); -webkit-font-smoothing:antialiased; line-height:1.5}
+  .wrap{max-width:760px; margin:0 auto; padding:clamp(20px,5vw,44px) clamp(16px,4vw,32px) 80px}
+
+  header{border-bottom:1px solid var(--line); padding-bottom:22px; margin-bottom:8px}
+  .kick{font-family:var(--mono); font-size:12px; letter-spacing:.22em; text-transform:uppercase; color:var(--bright)}
+  h1{font-size:clamp(24px,5.5vw,34px); line-height:1.12; letter-spacing:-.02em; margin:.35em 0 .2em; text-wrap:balance}
+  .meta{font-family:var(--mono); font-size:13px; color:var(--soft); display:flex; gap:16px; flex-wrap:wrap; margin-top:6px}
+  .meta b{color:var(--ink); font-weight:600}
+
+  .tips{background:var(--card); border:1px solid var(--line); border-radius:14px; padding:18px 20px; margin:24px 0 34px}
+  .tips h2{font-size:13px; font-family:var(--mono); letter-spacing:.16em; text-transform:uppercase; color:var(--bright); margin:0 0 10px}
+  .tips ul{margin:0; padding-left:20px; color:var(--soft); font-size:15px; line-height:1.65}
+  .tips li{margin:4px 0}
+  .tips b{color:var(--ink); font-weight:600}
+
+  .card{border:1px solid var(--line); border-radius:16px; padding:22px clamp(18px,3.5vw,26px); margin:16px 0; background:linear-gradient(180deg,rgba(20,45,64,.35),rgba(10,32,48,.15))}
+  .card .top{display:flex; align-items:baseline; gap:12px; margin-bottom:14px; flex-wrap:wrap}
+  .num{font-family:var(--mono); font-weight:700; font-size:13px; color:#04222e; background:var(--bright);
+    border-radius:8px; padding:3px 9px; letter-spacing:.04em}
+  .stitle{font-weight:700; font-size:clamp(16px,2.4vw,19px); letter-spacing:-.01em}
+  .time{margin-left:auto; font-family:var(--mono); font-size:12px; color:var(--soft); font-variant-numeric:tabular-nums}
+
+  .say{font-size:clamp(17px,2.5vw,20px); line-height:1.62; color:var(--ink)}
+  .say .hl{color:var(--bright); font-weight:600}
+  .say em{font-style:normal; color:var(--ink); font-weight:600}
+  .jp{display:block; margin-top:10px; color:var(--blue); font-weight:600; font-size:.92em}
+  .jp::before{content:"JP  "; font-family:var(--mono); font-size:.7em; letter-spacing:.14em; color:var(--soft); font-weight:400}
+
+  .do{display:flex; gap:9px; margin-top:15px; padding-top:13px; border-top:1px dashed var(--line);
+    font-family:var(--mono); font-size:13px; color:var(--soft); line-height:1.5}
+  .do::before{content:"▸"; color:var(--bright)}
+  .do b{color:var(--ink); font-weight:600}
+  .warn{color:var(--amber)}
+
+  footer{margin-top:34px; padding-top:18px; border-top:1px solid var(--line); font-family:var(--mono); font-size:12px; color:var(--soft)}
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="kick">Speaker Script</div>
+    <h1>The Role of Workflow in the BillOne Ecosystem</h1>
+    <div class="meta"><span>SGDC Tech Talk</span><span>·</span><span><b>~11–12 min</b></span><span>·</span><span>12 slides</span></div>
+  </header>
+
+  <div class="tips">
+    <h2>Before you start</h2>
+    <ul>
+      <li>The slides are your <b>set</b>, you're the narrator. Talk to the room, not the screen.</li>
+      <li><b>承認くん is your through-line</b>, name him, follow his feelings. The audience roots for him.</li>
+      <li><b>Slow down at slide 03</b> (the low point) and after "invisible to everything else."</li>
+      <li><b>Slide 08:</b> actually click each tab, let the animation play, then explain it. Don't read the caption.</li>
+      <li>The <b>plot twist (09)</b> is your memorable beat, land it lightly, maybe for a small laugh.</li>
+      <li>Say the short <b>Japanese lines</b> naturally, they give 承認くん his voice.</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <div class="top"><span class="num">Open</span><span class="stitle">Walk-on · Title</span><span class="time">1:15</span></div>
+    <div class="say">"Hi everyone, I'm Vani. Small confession to start: I'm not actually a football person. My YouTube algorithm, though, is <em>obsessed</em>, so this past month I've been involuntarily, emotionally invested in the World Cup. And it taught me two things. One: Argentina lost to Spain, so, to any Messi fans in the room… <em>I'm sorry. I felt that one for you.</em> <em>[beat]</em> And two: football has an <em>approval system</em>. It's called <span class="hl">VAR</span>, Video Assistant Referee, basically instant replay for referees: a goal goes in, officials review the footage, and everyone waits for the verdict, <em>approved</em>… or <em>disallowed</em>. <em>[beat]</em> That wait? Turns out, that's basically my whole job. Let me show you the version without the heartbreak. It's called <span class="hl">Workflow</span>."
+      <span class="jp">白状します。僕サッカー詳しくないんです。YouTube のアルゴリズムが勝手に見せてくるだけで…。</span>
+    </div>
+    <div class="do"><span><b>⚠️ Verify the actual final result before the talk</b> (a wrong scoreline kills the joke). Look for Messi fans on "I'm sorry", play to them. Beats after "I felt that one for you" and before "that's basically my whole job."</span></div>
+  </div>
+
+  <div class="card">
+    <div class="top"><span class="num">01</span><span class="stitle">This is Workflow</span><span class="time">0:50</span></div>
+    <div class="say">"So what is it? One line: Workflow is BillOne's <span class="hl">approval engine</span>. Any time something needs a human to say <em>yes</em>, an invoice to pay, an expense to reimburse, Workflow decides who approves, in what order, and records it. It's built and run by our WF group. But it didn't start as an engine. It started much smaller."</div>
+    <div class="do"><span>Gesture to the Workflow character. Let "started much smaller" set up the story.</span></div>
+  </div>
+
+  <div class="card">
+    <div class="top"><span class="num">02</span><span class="stitle">How it began · Invoice + 承認くん</span><span class="time">1:00</span></div>
+    <div class="say">"First, there was <span class="hl">Invoice</span>. BillOne receives an invoice and files it, but before anyone pays, someone has to approve it. So an approval feature was built, <em>wrapping</em> BillOne's existing <em>sign</em> feature, right inside the invoice service. That approval helper is who we'll call <span class="hl">承認くん</span>. Invoice says 'someone approve this!' and he says 'はい！', on it."</div>
+    <div class="do"><span>Invoice is already asking. On your cue ("let's call him 承認くん… はい！"), <b>click the slide</b> to pop 承認くん in. He's the character the whole talk hangs on, point at him.</span></div>
+  </div>
+
+  <div class="card">
+    <div class="top"><span class="num">03</span><span class="stitle">He grew up</span><span class="time">0:55</span></div>
+    <div class="say">"And 承認くん <span class="hl">grew up</span>. That little feature became a real approval system, serial routes that step through an order, approver groups so you route to a team or a role, proxy approval, and send-back to reject and return a step. All of it living inside the invoice service, sharing its database. Quietly, he became critical to how invoices get paid."</div>
+    <div class="do"><span>Slightly proud tone, he's a capable little guy now.</span></div>
+  </div>
+
+  <div class="card">
+    <div class="top"><span class="num">04</span><span class="stitle">The catch · stuck inside</span><span class="time">1:00</span></div>
+    <div class="say">"But here's the catch. 承認くん only ever knew <span class="hl">invoices</span>. He was invoice-shaped, wired straight into the invoice database, speaking only invoice's language, its IDs, its tables. No automatic approval; every step waited on a human. And because he'd been built in a hurry, feature by feature as needs came up, he carried heavy <span class="hl">technical debt</span>. On top of that, he was <span class="hl">unshareable</span>, no other service could reuse a single line of him. Great for invoices. Invisible to everything else."</div>
+    <div class="do"><span><b>Slow down.</b> Pause after "invisible to everything else." This is the low point.</span></div>
+  </div>
+
+  <div class="card">
+    <div class="top"><span class="num">05</span><span class="stitle">Then came Model4</span><span class="time">1:00</span></div>
+    <div class="say">"Then, under Sansan's <span class="hl">Model4</span> strategy, two new services arrive, <span class="hl">Expense</span> and <span class="hl">Issuing</span>, and both need approval. Not a nice-to-have, a must-have. 'Hey, I'd love an approval flow too!' But 承認くん was locked inside Invoice, debt and all. So we had a choice: copy-paste approval into each, or build it right. We built it right, a <span class="hl">standalone Workflow microservice</span> any service can call. Expense became its first customer. And now we had two approval worlds."</div>
+    <div class="do"><span><b>Three clicks:</b> (1) the <b>Model4 · 2024</b> chip, (2) <b>Expense + Issuing</b> rise in ("We'd love approval too!"), (3) <b>Workflow</b> answers. Pace it to your narration.</span></div>
+  </div>
+
+  <div class="card">
+    <div class="top"><span class="num">06</span><span class="stitle">Table stakes · Kano</span><span class="time">0:45</span></div>
+    <div class="say">"Here's why that mattered. In <span class="hl">Kano-model</span> terms, approval is a <em>must-be</em> quality. Nobody thanks Expense or Issuing for <em>having</em> an approval flow, it's invisible when it's there. But ship them <em>without</em> it? Dead on arrival. So for these services, workflow wasn't optional, it was <span class="hl">table stakes</span>."</div>
+    <div class="do"><span>Let the bright <b>must-be</b> curve draw, then land "dead on arrival." Point to Workflow sitting in the dissatisfier zone.</span></div>
+  </div>
+
+  <div class="card">
+    <div class="top"><span class="num">07</span><span class="stitle">Why it matters · two of him</span><span class="time">0:50</span></div>
+    <div class="say">"And two worlds is the problem. Effectively <span class="hl">two 承認くん</span>, one trapped in Invoice, one in the new service. Two implementations of 'approval' means double the maintenance, and worse, the rules <span class="hl">drift apart</span>, the same company could get different behavior in different services. And unifying approval for just Expense and Issuing wouldn't fix it, you'd still lack <span class="hl">consistency across the whole product</span>. In a finance product, that's exactly what you can't have, which is why WF had to be one service, for every module."</div>
+    <div class="do"><span>This is the tension, sound a little concerned here.</span></div>
+  </div>
+
+  <div class="card">
+    <div class="top"><span class="num">08</span><span class="stitle">Where WF fits · one for everyone</span><span class="time">1:00</span></div>
+    <div class="say">"So where should this live? Not as a feature inside one service, as a <span class="hl">layer under many</span>. One unified Workflow that Invoice, Expense, and whatever comes next all plug into. That's our group's mission: a unified workflow foundation. Technically, services reach it two ways, a synchronous <span class="hl">internal API</span> through a client library, and async <span class="hl">domain events</span> over PubSub, like <em>WorkflowRequestStatusChanged</em>, so a service knows the instant its request is approved. And it's not just plumbing, the goal is a WF that's genuinely <span class="hl">easy to use</span> for admins, approvers, and every user, and that <span class="hl">automates away</span> the tedious apply-and-approve busywork."</div>
+    <div class="do"><span>The turn toward the solution, lift the energy. The two integration paths are your technical credibility.</span></div>
+  </div>
+
+  <div class="card">
+    <div class="top"><span class="num">09</span><span class="stitle">Where it's going · 承認くん can rest</span><span class="time">0:50</span></div>
+    <div class="say">"Which means <span class="hl">承認くん can finally rest</span>. The plan: Invoice migrates its approval onto the shared service, the same one Expense already uses. It's already partway there, with a module that delegates to the Workflow client library. The old embedded flow retires; everyone plugs into one core."</div>
+    <div class="do"><span>Warm payoff beat, he earned his rest.</span></div>
+  </div>
+
+  <div class="card">
+    <div class="top"><span class="num">10</span><span class="stitle">What it unlocks · interactive</span><span class="time">1:30</span></div>
+    <div class="say">"And its own engine unlocks things the embedded flow never could. Three quick ones.
+      <br><br>[<span class="hl">Parallel</span>] Within a segment you get multiple <em>branches</em>, approvers working at once, and each branch is itself a sequence of steps. All branches finish, then a serial step, because a route can't end on a parallel.
+      <br><br>[<span class="hl">Automatic</span>] Rule-based steps that approve themselves when the rule matches the evidence, but at least one human step is always required. This one's still in progress on our side.
+      <br><br>[<span class="hl">Relay</span>] And relay, careful here: relay itself isn't new, the old WF had it. What's <em>new</em> is combining relay <em>with</em> routes. Each approver nominates the next, until the final one completes.
+      <br><br>[<span class="hl">Org chart</span>] You set the route template once, then the actual approvers are resolved <em>live</em> from the org chart, so nobody hand-edits routes when people change roles or move departments. Fun aside, that same org chart is even used in Expense's daily-allowance flows."</div>
+    <div class="do"><span><b>Click each tab</b> as you name it; let the animation finish, then explain. <span class="warn">Say "in progress" out loud for Automatic.</span></span></div>
+  </div>
+
+  <div class="card">
+    <div class="top"><span class="num">11</span><span class="stitle">Plot twist</span><span class="time">0:55</span></div>
+    <div class="say">"Now, <span class="hl">plot twist</span>. 承認くん isn't going anywhere just yet. For <em>some</em> tenants, the old flow is genuinely enough, they don't need parallel or automatic approval, and simpler suits their use case. Realistically, full migration is two to three years out. But make no mistake, our stance as the Workflow group is <span class="hl">unification</span>. One Workflow, eventually for everyone."</div>
+    <div class="do"><span>On "…but he isn't going anywhere," <b>click</b> to pop 承認くん back in. Land it lightly for a laugh, then get sincere on "unification."</span></div>
+  </div>
+
+  <div class="card">
+    <div class="top"><span class="num">Close</span><span class="stitle">One Workflow</span><span class="time">0:40</span></div>
+    <div class="say">"So that's the story. Workflow started as a feature inside Invoice, and grew into BillOne's <span class="hl">shared approval backbone</span>, the layer that turns <em>received</em> into <em>approved</em>, for whatever comes next. Thank you. And if you build something that needs approval, you know who to call: the WF group."</div>
+    <div class="do"><span>Cast reunion on screen. Slow down, make eye contact, own the last line. If asked, WF questions can go to Ren (PdM), he'll follow up afterward (on afternoon leave that day).</span></div>
+  </div>
+
+  <footer>Speaker script · pairs with the presenter deck · keep 承認くん Japanese, everyone else English.</footer>
+</div>
